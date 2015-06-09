@@ -154,13 +154,87 @@ function executeBoundSQL($cmdstr, $list) {
 
 }
 
-function printResult($result) { //prints results from a select statement
-	echo "<br>Got data from table tab1:<br>";
+function printReviews($review) { //prints results from a select statement
+	echo "<br>Reviews:<br>";
 	echo "<table>";
-	echo "<tr><th>ID</th><th>Name</th></tr>";
+	echo "<tr><th>RID</th><th>Date</th><th>Company</th><th>Position</th><th>Rating</th><th>Comment</th></tr>";
 
-	while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
-		echo "<tr><td>" . $row["NID"] . "</td><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]"
+	while ($row = OCI_Fetch_Array($review, OCI_BOTH)) {
+		echo "<tr><td>" . $row["RID"] . "</td><td>" . $row["REVIEW_DATE"] . "</td><td>" .
+    $row["COMPANYNAME"] . "</td><td>" . $row["POSTITLE"] . "</td><td>" .
+    $row["RATING"] . "</td><td>" . $row["REVIEW_COMMENT"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printCompany($company) { //prints results from a select statement
+	echo "<br>Companies:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
+
+	while ($row = OCI_Fetch_Array($company, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["ABOUT"] . "</td><td>" . $row["TYPE"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printPosition($position) { //prints results from a select statement
+	echo "<br>Positions:<br>";
+	echo "<table>";
+	echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>City</th><th>Province</th><th>Type</th></tr>";
+
+	while ($row = OCI_Fetch_Array($position, OCI_BOTH)) {
+		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["DUTIES"] . "</td><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printCompanyType($companytype) { //prints results from a select statement
+	echo "<br>Company Type:<br>";
+	echo "<table>";
+	echo "<tr><th>Type</th><th>Description</th></tr>";
+
+	while ($row = OCI_Fetch_Array($companytype, OCI_BOTH)) {
+		echo "<tr><td>" . $row["TYPE"] . "</td><td>" . $row["DESCRIPTION"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printDepartment($department) { //prints results from a select statement
+	echo "<br>Departments:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th></tr>";
+
+	while ($row = OCI_Fetch_Array($department, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printSkills($skills) { //prints results from a select statement
+	echo "<br>Skills:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th><th>Description</th></tr>";
+
+	while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["DESCRIPTION"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printLocation($location) { //prints results from a select statement
+	echo "<br>Locations:<br>";
+	echo "<table>";
+	echo "<tr><th>City</th><th>Province</th><th>Country</th></tr>";
+
+	while ($row = OCI_Fetch_Array($location, OCI_BOTH)) {
+		echo "<tr><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td><td>" . $row["COUNTRY"] . "</td></tr>"; //or just use "echo $row[0]"
 	}
 	echo "</table>";
 
@@ -235,8 +309,20 @@ if ($db_conn) {
 		header("location: oracle-test.php");
 	} else {
 		// Select data...
-		$result = executePlainSQL("select * from tab1");
-		printResult($result);
+		$review = executePlainSQL("select * from review");
+    $company = executePlainSQL("select * from coopcompany");
+    $position = executePlainSQL("select * from positionforcompany");
+    $companytype = executePlainSQL("select * from companytype");
+    $department = executePlainSQL("select * from department");
+    $skills = executePlainSQL("select * from skills");
+    $location = executePlainSQL("select * from location");
+		printReviews($review);
+    printCompany($company);
+    printPosition($position);
+    printCompanyType($companytype);
+    printDepartment($department);
+    printSkills($skills);
+    printLocation($location);
 	}
 
 	//Commit to save changes...
