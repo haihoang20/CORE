@@ -51,11 +51,6 @@ size="18">
 </form>
 
 
-
-
-
-
-
 <form method="GET" action="oracle-test.php">
 <input type="submit" value="Reviews" name="getreviews">
 <input type="submit" value="Companies" name="getcompanies">
@@ -65,6 +60,17 @@ size="18">
 <input type="submit" value="Skills" name="getskills">
 <input type="submit" value="Locations" name="getlocations">
 </form>
+
+<p>
+  <form method="GET" action="oracle-test.php">
+    Companies with ratings:
+    <input type="submit" value="1" name="getrating1">
+    <input type="submit" value="2" name="getrating2">
+    <input type="submit" value="3" name="getrating3">
+    <input type="submit" value="4" name="getrating4">
+    <input type="submit" value="5" name="getrating5">
+  </form>
+</p>
 
 
 <?php
@@ -320,6 +326,31 @@ if ($db_conn) {
           if (array_key_exists('getlocations', $_GET)){
             $location = executePlainSQL("select * from location");
             printLocation($location);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getrating1', $_GET)){
+            $review = executePlainSQL("select * from review where rating=1");
+            printReviews($review);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getrating2', $_GET)){
+            $review = executePlainSQL("select * from review where rating=2");
+            printReviews($review);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getrating3', $_GET)){
+            $review = executePlainSQL("select * from review where rating=3");
+            printReviews($review);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getrating4', $_GET)){
+            $review = executePlainSQL("select * from review where rating=4");
+            printReviews($review);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getrating5', $_GET)){
+            $review = executePlainSQL("select * from review where rating=5");
+            printReviews($review);
             OCICommit($db_conn);
           }
 
