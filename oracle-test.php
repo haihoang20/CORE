@@ -56,7 +56,6 @@ size="18">
 <p><input type="text" name="searchPhrase" size="6">
 <input type="submit" value="Go" name="simplesearch"></p>
 </form>
-<p> Simple Search Results: </p>
 
 <!-- Simple Table Views -->
 <form method="GET" action="oracle-test.php">
@@ -305,7 +304,6 @@ if ($db_conn) {
 
 						$sphrase = $_GET['searchPhrase'];
 						$sphrase = "'%".$sphrase."%'";
-						echo $sphrase;
 						
 						$sqlquery = "select * from review where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
 						
