@@ -57,6 +57,17 @@ size="18">
 <input type="submit" value="Go" name="simplesearch"></p>
 </form>
 
+<!-- Advanced Search of Reviews -->
+<p> Advanced search of the reviews: </p>
+<form method="GET" action="oracle-test.php">
+<p><font size="2"> Company Name </font><input type="text" name="companyname" size="6"></p>
+<p><font size="2"> Position Title </font><input type="text" name="postitle" size="6"></p>
+<p><font size="2"> Rating </font><input type="text" name="rating" size="6"></p>
+<p><font size="2"> Earliest Written Date (DD-MM-YY) </font><input type="text" name="datebound" size="6"></p>
+<p><font size="2"> Comment contains... </font><input type="text" name="commentcontains" size="6"></p>
+<p><input type="submit" value="Go" name="advsearch"></p>
+</form>
+
 <!-- Simple Table Views -->
 <form method="GET" action="oracle-test.php">
 <input type="submit" value="Reviews" name="getreviews">
@@ -301,7 +312,6 @@ if ($db_conn) {
 					OCICommit($db_conn);
 				} else
 					if (array_key_exists('simplesearch', $_GET)) {
-
 						$sphrase = $_GET['searchPhrase'];
 						$sphrase = "'%".$sphrase."%'";
 						
@@ -311,6 +321,49 @@ if ($db_conn) {
 						printReviews($results);
 						OCICommit($db_conn);
 					} else
+						if (array_key_exists('advsearch', $_GET)) {
+							$cname = "'%".$_GET['companyname']."%'";
+							$postitle = "'%".$_GET['postitle']."%'";
+							$rating = $_GET['rating'];
+							$ccontains = "'%".$_GET['commentcontains']."%'";
+							$dateb = $_GET['datebound'];
+							
+							$reqs = '';
+							if (!empty($cname)) {
+								$reqs = $reqs."companyname LIKE $cname";
+							}
+							if (!empty($postitle)) {
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";
+								}
+								$reqs = $reqs."postitle like $postitle";
+							}
+							if (!empty($rating)) {
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";
+								}
+								$reqs = $reqs."rating = $rating";
+							}
+							if (!empty($dateb)) {
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";	
+								}
+								$reqs = $reqs."review_date >= $dateb";
+								// TODO: Check and match with date format in db
+							}
+							if (!empty($ccontains)) {
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";	
+								}
+								$reqs = $reqs."review_comment like $ccontains";
+							}
+
+							$sqlquery = "select * from review where $reqs";
+							echo $sqlquery;
+							$results = executePlainSQL($sqlquery);
+							printReviews($results);
+							OCICommit($db_conn);
+						} else
           if (array_key_exists('getreviews', $_GET)){
             $review = executePlainSQL("select * from review");
             printReviews($review);
