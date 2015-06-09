@@ -135,6 +135,42 @@ function printReviews($review) { //prints results from a select statement
 
 }
 
+function printCompany($company) { //prints results from a select statement
+	echo "<br>Companies:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
+
+	while ($row = OCI_Fetch_Array($company, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["ABOUT"] . "</td><td>" . $row["TYPE"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printPosition($position) { //prints results from a select statement
+	echo "<br>Positions:<br>";
+	echo "<table>";
+	echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>City</th><th>Province</th><th>Type</th></tr>";
+
+	while ($row = OCI_Fetch_Array($position, OCI_BOTH)) {
+		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["DUTIES"] . "</td><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printCompanyType($companytype) { //prints results from a select statement
+	echo "<br>Company Type:<br>";
+	echo "<table>";
+	echo "<tr><th>Type</th><th>Description</th></tr>";
+
+	while ($row = OCI_Fetch_Array($companytype, OCI_BOTH)) {
+		echo "<tr><td>" . $row["TYPE"] . "</td><td>" . $row["DESCRIPTION"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
 // Connect Oracle...
 if ($db_conn) {
 
@@ -205,7 +241,16 @@ if ($db_conn) {
 	} else {
 		// Select data...
 		$review = executePlainSQL("select * from review");
+    $company = executePlainSQL("select * from coopcompany");
+    $position = executePlainSQL("select * from positionforcompany");
+    $companytype = executePlainSQL("select * from companytype");
+    $department = executePlainSQL("select * from department");
+    $skills = executePlainSQL("select * from skills");
+    $location = executePlainSQL("select * from location");
 		printReviews($review);
+    printCompany($company);
+    printCompanyType($companytype);
+    printPosition($position);
 	}
 
 	//Commit to save changes...
