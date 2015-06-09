@@ -18,6 +18,7 @@
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="822842326093-oo9m0j9se9020sqt97q0hf26rq3uqf37.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+
   </head>
   <body>
     <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
@@ -33,11 +34,21 @@
         // The ID token you need to pass to your backend:
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
-      };
+
+        var divid = document.getElementById("welcome");
+        var tname = document.createElement("h1");
+        tname.innerHTML = "Welcome Back " + profile.getName() + "!";
+
+        divid.appendChild(tname);
+
+      }
+      
     </script>
+
+
   </body>
 
-
+<div id="welcome"></div>
 <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
 <form method="POST" action="oracle-test.php">
 
@@ -80,6 +91,9 @@ size="18">
     auth2.signOut().then(function () {
       console.log('User signed out.');
     });
+
+    var divid = document.getElementById("welcome");
+    divid.innerHTML = "";
   }
 </script>
 
@@ -90,6 +104,9 @@ size="18">
 
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon("ora_n6o8", "a15724032", "ug");
+
+//echo "<h1>" . super_profile.getName() . "</h1>";
+
 
 function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL command and executes it
 	//echo "<br>running ".$cmdstr."<br>";
@@ -332,6 +349,8 @@ if ($db_conn) {
 	$e = OCI_Error(); // For OCILogon errors pass no handle
 	echo htmlentities($e['message']);
 }
+
+
 
 /* OCILogon() allows you to log onto the Oracle database
      The three arguments are the username, password, and database
