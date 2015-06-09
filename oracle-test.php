@@ -121,13 +121,15 @@ function executeBoundSQL($cmdstr, $list) {
 
 }
 
-function printResult($result) { //prints results from a select statement
-	echo "<br>Got data from table tab1:<br>";
+function printReviews($review) { //prints results from a select statement
+	echo "<br>Reviews:<br>";
 	echo "<table>";
-	echo "<tr><th>ID</th><th>Name</th></tr>";
+	echo "<tr><th>RID</th><th>Date</th><th>Company</th><th>Position</th><th>Rating</th><th>Comment</th></tr>";
 
-	while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
-		echo "<tr><td>" . $row["NID"] . "</td><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]"
+	while ($row = OCI_Fetch_Array($review, OCI_BOTH)) {
+		echo "<tr><td>" . $row["RID"] . "</td><td>" . $row["REVIEW_DATE"] . "</td><td>" .
+    $row["COMPANYNAME"] . "</td><td>" . $row["POSTITLE"] . "</td><td>" .
+    $row["RATING"] . "</td><td>" . $row["REVIEW_COMMENT"] . "</td></tr>"; //or just use "echo $row[0]"
 	}
 	echo "</table>";
 
@@ -202,8 +204,8 @@ if ($db_conn) {
 		header("location: oracle-test.php");
 	} else {
 		// Select data...
-		$result = executePlainSQL("select * from tab1");
-		printResult($result);
+		$review = executePlainSQL("select * from review");
+		printReviews($review);
 	}
 
 	//Commit to save changes...
