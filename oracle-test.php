@@ -171,6 +171,42 @@ function printCompanyType($companytype) { //prints results from a select stateme
 
 }
 
+function printDepartment($department) { //prints results from a select statement
+	echo "<br>Departments:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th></tr>";
+
+	while ($row = OCI_Fetch_Array($department, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printSkills($skills) { //prints results from a select statement
+	echo "<br>Skills:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th><th>Description</th></tr>";
+
+	while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["DESCRIPTION"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printLocation($location) { //prints results from a select statement
+	echo "<br>Locations:<br>";
+	echo "<table>";
+	echo "<tr><th>City</th><th>Province</th><th>Country</th></tr>";
+
+	while ($row = OCI_Fetch_Array($location, OCI_BOTH)) {
+		echo "<tr><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td><td>" . $row["COUNTRY"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
 // Connect Oracle...
 if ($db_conn) {
 
@@ -249,8 +285,11 @@ if ($db_conn) {
     $location = executePlainSQL("select * from location");
 		printReviews($review);
     printCompany($company);
-    printCompanyType($companytype);
     printPosition($position);
+    printCompanyType($companytype);
+    printDepartment($department);
+    printSkills($skills);
+    printLocation($location);
 	}
 
 	//Commit to save changes...
