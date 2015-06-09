@@ -50,6 +50,23 @@ size="18">
 <input type="submit" value="run hardcoded queries" name="dostuff"></p>
 </form>
 
+
+
+
+
+
+
+<form method="GET" action="oracle-test.php">
+<input type="submit" value="Reviews" name="getreviews">
+<input type="submit" value="Companies" name="getcompanies">
+<input type="submit" value="Positions" name="getpositions">
+<input type="submit" value="Company Types" name="getcompanytypes">
+<input type="submit" value="Departments" name="getdepartments">
+<input type="submit" value="Skills" name="getskills">
+<input type="submit" value="Locations" name="getlocations">
+</form>
+
+
 <?php
 
 //this tells the system that it's no longer just parsing
@@ -269,27 +286,62 @@ if ($db_conn) {
 					// Delete data...
 					//executePlainSQL("delete from tab1 where nid=1");
 					OCICommit($db_conn);
-				}
+				} else
+          if (array_key_exists('getreviews', $_GET)){
+            $review = executePlainSQL("select * from review");
+            printReviews($review);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getcompanies', $_GET)){
+            $company = executePlainSQL("select * from coopcompany");
+            printCompany($company);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getpositions', $_GET)){
+            $position = executePlainSQL("select * from positionforcompany");
+            printPosition($position);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getcompanytypes', $_GET)){
+            $companytype = executePlainSQL("select * from companytype");
+            printCompanyType($companytype);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getdepartments', $_GET)){
+            $department = executePlainSQL("select * from department");
+            printDepartment($department);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getskills', $_GET)){
+            $skills = executePlainSQL("select * from skills");
+            printSkills($skills);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getlocations', $_GET)){
+            $location = executePlainSQL("select * from location");
+            printLocation($location);
+            OCICommit($db_conn);
+          }
 
 	if ($_POST && $success) {
 		//POST-REDIRECT-GET -- See http://en.wikipedia.org/wiki/Post/Redirect/Get
 		header("location: oracle-test.php");
 	} else {
 		// Select data...
-		$review = executePlainSQL("select * from review");
-    $company = executePlainSQL("select * from coopcompany");
-    $position = executePlainSQL("select * from positionforcompany");
-    $companytype = executePlainSQL("select * from companytype");
-    $department = executePlainSQL("select * from department");
-    $skills = executePlainSQL("select * from skills");
-    $location = executePlainSQL("select * from location");
-		printReviews($review);
-    printCompany($company);
-    printPosition($position);
-    printCompanyType($companytype);
-    printDepartment($department);
-    printSkills($skills);
-    printLocation($location);
+		// $review = executePlainSQL("select * from review");
+    // $company = executePlainSQL("select * from coopcompany");
+    // $position = executePlainSQL("select * from positionforcompany");
+    // $companytype = executePlainSQL("select * from companytype");
+    // $department = executePlainSQL("select * from department");
+    // $skills = executePlainSQL("select * from skills");
+    // $location = executePlainSQL("select * from location");
+		// printReviews($review);
+    // printCompany($company);
+    // printPosition($position);
+    // printCompanyType($companytype);
+    // printDepartment($department);
+    // printSkills($skills);
+    // printLocation($location);
 	}
 
 	//Commit to save changes...
