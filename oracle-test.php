@@ -50,7 +50,15 @@ size="18">
 <input type="submit" value="run hardcoded queries" name="dostuff"></p>
 </form>
 
+<!-- Simple Search of Reviews -->
+<p> Simple search of the reviews: </p>
+<form method="GET" action="oracle-test.php">
+<p><input type="text" name="searchPhrase" size="6">
+<input type="submit" value="Go" name="simplesearch"></p>
+</form>
+<p> Simple Search Results: </p>
 
+<!-- Simple Table Views -->
 <form method="GET" action="oracle-test.php">
 <input type="submit" value="Reviews" name="getreviews">
 <input type="submit" value="Companies" name="getcompanies">
@@ -293,6 +301,18 @@ if ($db_conn) {
 					//executePlainSQL("delete from tab1 where nid=1");
 					OCICommit($db_conn);
 				} else
+					if (array_key_exists('simplesearch', $_GET)) {
+
+						$sphrase = $_GET['searchPhrase'];
+						$sphrase = "'%".$sphrase."%'";
+						echo $sphrase;
+						
+						$sqlquery = "select * from review where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
+						
+						$results = executePlainSQL($sqlquery);
+						printReviews($results);
+						OCICommit($db_conn);
+					} else
           if (array_key_exists('getreviews', $_GET)){
             $review = executePlainSQL("select * from review");
             printReviews($review);
