@@ -15,39 +15,36 @@
   extension.  You must also change the username and password on the
   OCILogon below to be your ORACLE username and password -->
 
-<p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
 <form method="POST" action="oracle-test.php">
+<p>Write a new Review:</p>
+<p>Company Name</p>
+<?php
+$success = True; //keep track of errors so it redirects the page only if there are no errors
+$db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
+if ($db_conn) {
 
-<p><input type="submit" value="Reset" name="reset"></p>
-</form>
+                $companynames = executePlainSQL("select name from coopcompany");
+                printCompanyNames($companynames);
 
-<p>Insert values into tab1 below:</p>
-<p><font size="2"> Number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Name</font></p>
-<form method="POST" action="oracle-test.php">
-<!--refresh page when submit-->
+echo "<p>Position Title</p>";
+                $postitles = executePlainSQL("select title from positionforcompany");
+                printPosTitles($postitles);
+}
+?>
 
-   <p><input type="text" name="insNo" size="6"><input type="text" name="insName"
-size="18">
-<!--define two variables to pass the value-->
 
-<input type="submit" value="insert" name="insertsubmit"></p>
-</form>
-<!-- create a form to pass the values. See below for how to
-get the values-->
+<p>Rating</p>
+<select name="rating">
+  <option value=1>1</option>
+  <option value=2>2</option>
+  <option value=3>3</option>
+  <option value=4>4</option>
+  <option value=5>5</option>
+</select>
 
-<p> Update the name by inserting the old and new values below: </p>
-<p><font size="2"> Old Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-New Name</font></p>
-<form method="POST" action="oracle-test.php">
-<!--refresh page when submit-->
-
-   <p><input type="text" name="oldName" size="6"><input type="text" name="newName"
-size="18">
-<!--define two variables to pass the value-->
-
-<input type="submit" value="update" name="updatesubmit"></p>
-<input type="submit" value="run hardcoded queries" name="dostuff"></p>
+<p>Review Body</p>
+<p><textarea name="review_comment"></textarea></p>
+<input type="submit" value="Submit Review" name="submit_review"></p>
 </form>
 
 <?php
@@ -55,8 +52,6 @@ size="18">
 //this tells the system that it's no longer just parsing
 //html; it's now parsing PHP
 
-$success = True; //keep track of errors so it redirects the page only if there are no errors
-$db_conn = OCILogon("ora_s8n8", "a27744093", "ug");
 
 function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL command and executes it
 	//echo "<br>running ".$cmdstr."<br>";
@@ -118,16 +113,124 @@ function executeBoundSQL($cmdstr, $list) {
 			$success = False;
 		}
 	}
+} 
+
+function printResult($result) { //prints results from a select statement
+        echo "<br>Got data from table tab1:<br>";
+        echo "<table>";
+        echo "<tr><th>ID</th><th>Name</th></tr>";
+
+        while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
+                echo "<tr><td>" . $row["NID"] . "</td><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]" 
+        }
+        echo "</table>";
+
+} 
+
+
+function printCompanyType($companytype) { //prints results from a select statement
+	echo "<br>Company Type:<br>";
+	echo "<table>";
+	echo "<tr><th>Type</th><th>Description</th></tr>";
+
+	while ($row = OCI_Fetch_Array($companytype, OCI_BOTH)) {
+		echo "<tr><td>" . $row["TYPE"] . "</td><td>" . $row["DESCRIPTION"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
 
 }
 
-function printResult($result) { //prints results from a select statement
-	echo "<br>Got data from table tab1:<br>";
+function printReviews($review) { //prints results from a select statement
+	echo "<br>Reviews:<br>";
 	echo "<table>";
-	echo "<tr><th>ID</th><th>Name</th></tr>";
+	echo "<tr><th>RID</th><th>Date</th><th>Company</th><th>Position</th><th>Rating</th><th>Comment</th></tr>";
 
-	while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
-		echo "<tr><td>" . $row["NID"] . "</td><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]"
+	while ($row = OCI_Fetch_Array($review, OCI_BOTH)) {
+		echo "<tr><td>" . $row["RID"] . "</td><td>" . $row[REVIEW_DATE] . "</td><td>" .
+    $row["COMPANYNAME"] . "</td><td>" . $row["POSTITLE"] . "</td><td>" .
+    $row["RATING"] . "</td><td>" . $row["REVIEW_COMMENT"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printCompanyNames($companies) { //prints results from a select statement
+        echo "<select name='companyname'>";
+	while ($row = OCI_Fetch_Array($companies, OCI_BOTH)) {
+                echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+	}
+        echo "</select>";
+	echo "</table>";
+
+}
+
+function printPosTitles($positions) { //prints results from a select statement
+        echo "<select name='postitle'>";
+	while ($row = OCI_Fetch_Array($positions, OCI_BOTH)) {
+                echo "<option value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+	}
+        echo "</select>";
+	echo "</table>";
+
+}
+
+
+function printCompany($company) { //prints results from a select statement
+	echo "<br>Companies:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
+
+	while ($row = OCI_Fetch_Array($company, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["ABOUT"] . "</td><td>" . $row["TYPE"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printPosition($position) { //prints results from a select statement
+	echo "<br>Positions:<br>";
+	echo "<table>";
+	echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>City</th><th>Province</th><th>Type</th></tr>";
+
+	while ($row = OCI_Fetch_Array($position, OCI_BOTH)) {
+		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["DUTIES"] . "</td><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+
+function printDepartment($department) { //prints results from a select statement
+	echo "<br>Departments:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th></tr>";
+
+	while ($row = OCI_Fetch_Array($department, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printSkills($skills) { //prints results from a select statement
+	echo "<br>Skills:<br>";
+	echo "<table>";
+	echo "<tr><th>Name</th><th>Description</th></tr>";
+
+	while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["DESCRIPTION"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printLocation($location) { //prints results from a select statement
+	echo "<br>Locations:<br>";
+	echo "<table>";
+	echo "<tr><th>City</th><th>Province</th><th>Country</th></tr>";
+
+	while ($row = OCI_Fetch_Array($location, OCI_BOTH)) {
+		echo "<tr><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td><td>" . $row["COUNTRY"] . "</td></tr>"; //or just use "echo $row[0]"
 	}
 	echo "</table>";
 
@@ -147,16 +250,22 @@ if ($db_conn) {
 		OCICommit($db_conn);
 
 	} else
-		if (array_key_exists('insertsubmit', $_POST)) {
+		if (array_key_exists('submit_review', $_POST)) {
 			//Getting the values from user and insert data into the table
 			$tuple = array (
-				":bind1" => $_POST['insNo'],
-				":bind2" => $_POST['insName']
+				":bind1" => $_POST['review_comment'],
+				":bind2" => getdate(),
+				":bind3" => $_POST['companyname'],
+                                ":bind4" => 101, // dummy value, coop student id
+				":bind5" => "Co-op Student",//$_POST['postitle'],
+				":bind6" => $_POST['rating']
 			);
 			$alltuples = array (
 				$tuple
 			);
-			executeBoundSQL("insert into tab1 values (:bind1, :bind2)", $alltuples);
+                        echo($tuple);
+			executeBoundSQL("insert into review values ((select r1.rid from review r1 where not exists (select r2.rid from review r2 where r2.rid > r1.rid)) + 1, :bind1, :bind2, :bind3, :bind4,
+                                        :bind5, :bind6)", $alltuples);
 			OCICommit($db_conn);
 
 		} else
@@ -202,8 +311,23 @@ if ($db_conn) {
 		header("location: oracle-test.php");
 	} else {
 		// Select data...
-		$result = executePlainSQL("select * from tab1");
-		printResult($result);
+		$review = executePlainSQL("select * from review");
+                //$company = executePlainSQL("select * from coopcompany");
+                //$position = executePlainSQL("select * from positionforcompany");
+                //$department = executePlainSQL("select * from department");
+                //$skills = executePlainSQL("select * from skills");
+                //$location = executePlainSQL("select * from location");
+                //$companytype = executePlainSQL("select * from companytype");
+                printReviews($review);
+                //printCompanyType($companytype);
+                //printCompany($company);
+                //printPosition($position);
+                //printDepartment($department);
+                //printSkills($skills);
+                //printLocation($location);
+                
+                //$result = executePlainSQL("select * from tab1");
+                //printResult($result);
 	}
 
 	//Commit to save changes...
