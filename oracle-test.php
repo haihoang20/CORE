@@ -41,7 +41,11 @@
 
         divid.appendChild(tname);
 
+
+        window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/oracle-test.php?id=" + profile.getEmail() + "#";
+
       }
+
       
     </script>
 
@@ -94,6 +98,7 @@ size="18">
 
     var divid = document.getElementById("welcome");
     divid.innerHTML = "";
+    window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/oracle-test.php?";
   }
 </script>
 
@@ -105,7 +110,24 @@ size="18">
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon("ora_n6o8", "a15724032", "ug");
 
-//echo "<h1>" . super_profile.getName() . "</h1>";
+
+//echo "TOKEN : ".$_GET['id']."<br>";
+
+
+$email = $_GET['id'];
+
+$email_list = executePlainSQL("select email from admin");
+
+
+if($email){
+	while ($row = OCI_Fetch_Array($email_list, OCI_BOTH)) {
+		if ($row["EMAIL"] == $email){
+			echo "<h1>YOU ARE AN ADMIN!</h1>";
+		break;
+	}
+}
+
+}
 
 
 function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL command and executes it
@@ -168,6 +190,18 @@ function executeBoundSQL($cmdstr, $list) {
 			$success = False;
 		}
 	}
+
+}
+
+function printAdmins($emails) { //prints results from a select statement
+	echo "<br>Admins:<br>";
+	echo "<table>";
+	echo "<tr><th>EMAIL</th></tr>";
+
+	while ($row = OCI_Fetch_Array($emails, OCI_BOTH)) {
+		echo "<tr><td>" . $row["EMAIL"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
 
 }
 
