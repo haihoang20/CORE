@@ -1,0 +1,15 @@
+h1 {
+        color: red;
+        text-align: center;
+}
+h2 {
+        color: red;
+}
+
+.form {
+        width: 300px;
+        background:lightblue;
+        padding: 5px;
+        margin-bottom: 30px;
+
+}
