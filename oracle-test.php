@@ -58,7 +58,9 @@ size="18">
 <input type="submit" value="Company Types" name="getcompanytypes">
 <input type="submit" value="Departments" name="getdepartments">
 <input type="submit" value="Skills" name="getskills">
+<input type="submit" value="Skills By Position" name ="getpositionskills">
 <input type="submit" value="Locations" name="getlocations">
+<input type="submit" value="Company Locations" name="getcompanylocations">
 </form>
 
 <p>
@@ -71,6 +73,12 @@ size="18">
     <input type="submit" value="5" name="getrating5">
   </form>
 </p>
+
+<form method="GET" action="oracle-test.php">
+  <input type="submit" value="Most Popular Vancouver Companies" name="getvancom">
+  <input type="submit" value="Departments With Most Jobs" name="deptjobs">
+  <input type="submit" value="Top 5 Desired Skills" name="topskills">
+</form>
 
 
 <?php
@@ -218,6 +226,18 @@ function printSkills($skills) { //prints results from a select statement
 
 }
 
+function printPosReqSkills($posreqskills) { //prints results from a select statement
+	echo "<br>Skills By Position:<br>";
+	echo "<table>";
+	echo "<tr><th>Position</th><th>Company</th><th>Skill</th></tr>";
+
+	while ($row = OCI_Fetch_Array($posreqskills, OCI_BOTH)) {
+		echo "<tr><td>" . $row["PTITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["SNAME"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
 function printLocation($location) { //prints results from a select statement
 	echo "<br>Locations:<br>";
 	echo "<table>";
@@ -225,6 +245,30 @@ function printLocation($location) { //prints results from a select statement
 
 	while ($row = OCI_Fetch_Array($location, OCI_BOTH)) {
 		echo "<tr><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td><td>" . $row["COUNTRY"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printCompanyLocation($companylocation) { //prints results from a select statement
+	echo "<br>Company Locations:<br>";
+	echo "<table>";
+	echo "<tr><th>Company</th><th>City</th><th>Province</th></tr>";
+
+	while ($row = OCI_Fetch_Array($companylocation, OCI_BOTH)) {
+		echo "<tr><td>" . $row["CNAME"] . "</td><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
+function printTopSkills($topskills) { //prints results from a select statement
+	echo "<br>Most Desired Skills:<br>";
+	echo "<table>";
+	echo "<tr><th>Skill</th><th>Number of positions that require this skill</th></tr>";
+
+	while ($row = OCI_Fetch_Array($topskills, OCI_BOTH)) {
+		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["NUM"] . "</td></tr>"; //or just use "echo $row[0]"
 	}
 	echo "</table>";
 
@@ -323,34 +367,76 @@ if ($db_conn) {
             printSkills($skills);
             OCICommit($db_conn);
           } else
+          if (array_key_exists('getpositionskills', $_GET)){
+            $posreqskills = executePlainSQL("select * from positionrequiresskill");
+            printPosReqSkills($posreqskills);
+            OCICommit($db_conn);
+          } else
           if (array_key_exists('getlocations', $_GET)){
             $location = executePlainSQL("select * from location");
             printLocation($location);
             OCICommit($db_conn);
           } else
+          if (array_key_exists('getcompanylocations', $_GET)){
+            $companylocation = executePlainSQL("select * from companylocation");
+            printCompanyLocation($companylocation);
+            OCICommit($db_conn);
+          } else
           if (array_key_exists('getrating1', $_GET)){
-            $review = executePlainSQL("select * from review where rating=1");
-            printReviews($review);
+            $company = executePlainSQL("select distinct name, about, type from coopcompany cc, review r where cc.name=r.companyname and r.rating=1");
+            printCompany($company);
             OCICommit($db_conn);
           } else
           if (array_key_exists('getrating2', $_GET)){
-            $review = executePlainSQL("select * from review where rating=2");
-            printReviews($review);
+            $company = executePlainSQL("select distinct name, about, type from coopcompany cc, review r where cc.name=r.companyname and r.rating=2");
+            printCompany($company);
             OCICommit($db_conn);
           } else
           if (array_key_exists('getrating3', $_GET)){
-            $review = executePlainSQL("select * from review where rating=3");
-            printReviews($review);
+            $company = executePlainSQL("select distinct name, about, type from coopcompany cc, review r where cc.name=r.companyname and r.rating=3");
+            printCompany($company);
             OCICommit($db_conn);
           } else
           if (array_key_exists('getrating4', $_GET)){
-            $review = executePlainSQL("select * from review where rating=4");
-            printReviews($review);
+            $company = executePlainSQL("select distinct name, about, type from coopcompany cc, review r where cc.name=r.companyname and r.rating=4");
+            printCompany($company);
             OCICommit($db_conn);
           } else
           if (array_key_exists('getrating5', $_GET)){
-            $review = executePlainSQL("select * from review where rating=5");
-            printReviews($review);
+            $company = executePlainSQL("select distinct name, about, type from coopcompany cc, review r where cc.name=r.companyname and r.rating=5");
+            printCompany($company);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('getvancom', $_GET)){
+            $company = executePlainSQL("select distinct name, about, type from coopcompany cc, companylocation cl, review r where cc.name=cl.cname and cc.name=r.companyname and cl.city='Vancouver' and r.rating>=4");
+            printCompany($company);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('deptjobs', $_GET)){
+            executePlainSql("drop view temp");
+            executePlainSql("create view Temp(cname, poscount) as (select cname, COUNT(*) as poscount from PositionForCompany GROUP BY cname)");
+            $department = executePlainSQL("select name
+                                           from department
+                                           where name in
+                                              (select ch.dname
+                                              from companyhiresfordept ch
+                                              where ch.cname in
+                                                  (select cname
+                                                  from Temp
+                                                  where Temp.poscount in
+                                                            (select max(poscount)
+                                                             from Temp)))");
+            printDepartment($department);
+            OCICommit($db_conn);
+          } else
+          if (array_key_exists('topskills', $_GET)){
+            $topskills = executePlainSQL("select name, num
+                                            from (select sname as name, count(*) as num
+                                                  from positionrequiresskill
+                                                  group by sname
+                                                  order by count(*) desc)
+                                            where rownum<=5");
+            printTopSkills($topskills);
             OCICommit($db_conn);
           }
 
