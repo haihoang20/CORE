@@ -274,6 +274,18 @@ function printTopSkills($topskills) { //prints results from a select statement
 
 }
 
+function printTopDepartment($topdept) { //prints results from a select statement
+	echo "<br>Departments with most jobs:<br>";
+	echo "<table>";
+	echo "<tr><th>Department</th><th>Number of Positions</th></tr>";
+
+	while ($row = OCI_Fetch_Array($topdept, OCI_BOTH)) {
+		echo "<tr><td>" . $row["DNAME"] . "</td><td>" . $row["NUM"] . "</td></tr>"; //or just use "echo $row[0]"
+	}
+	echo "</table>";
+
+}
+
 // Connect Oracle...
 if ($db_conn) {
 
@@ -415,18 +427,10 @@ if ($db_conn) {
           if (array_key_exists('deptjobs', $_GET)){
             executePlainSql("drop view temp");
             executePlainSql("create view Temp(cname, poscount) as (select cname, COUNT(*) as poscount from PositionForCompany GROUP BY cname)");
-            $department = executePlainSQL("select name
-                                           from department
-                                           where name in
-                                              (select ch.dname
-                                              from companyhiresfordept ch
-                                              where ch.cname in
-                                                  (select cname
-                                                  from Temp
-                                                  where Temp.poscount in
-                                                            (select max(poscount)
-                                                             from Temp)))");
-            printDepartment($department);
+            $topdept = executePlainSQL("select dname, max(posc) as num from (select dname, sum(poscount) as posc from companyhiresfordept c, temp t where t.cname=c.cname group by dname) where rownum<=1 group by dname");
+
+
+            printTopDepartment($topdept);
             OCICommit($db_conn);
           } else
           if (array_key_exists('topskills', $_GET)){
