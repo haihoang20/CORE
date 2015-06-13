@@ -75,6 +75,7 @@ function executeBoundSQL($cmdstr, $list) {
 			$success = False;
 		}
 	}
+        return $statement;
 } 
 
 function printResult($result) { //prints results from a select statement
@@ -110,30 +111,34 @@ function printReviews($review) { //prints results from a select statement
 	while ($row = OCI_Fetch_Array($review, OCI_BOTH)) {
 		echo "<tr><td>" . $row["RID"] . "</td><td>" . $row[REVIEW_DATE] . "</td><td>" .
     $row["COMPANYNAME"] . "</td><td>" . $row["POSTITLE"] . "</td><td>" .
-    $row["RATING"] . "</td><td>" . $row["REVIEW_COMMENT"] . "</td></tr>"; //or just use "echo $row[0]"
+    $row["RATING"] . "</td><td>" . $row["REVIEW_COMMENT"] . "</td><td><a href='edit-review.php?rid=" . $row["RID"] . "'>Edit Review</a></td></tr>"; //or just use "echo $row[0]"
 	}
 	echo "</table>";
 
 }
 
-function printCompanyNames($companies) { //prints results from a select statement
+
+function printCompanyNames($companies, $selected) { //prints results from a select statement
         echo "<select name='companyname'>";
 	while ($row = OCI_Fetch_Array($companies, OCI_BOTH)) {
-                echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                if (isset($selected) && $selected == $row['NAME']) {
+                        echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                }
+                else {echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";}
 	}
         echo "</select>";
-	echo "</table>";
-
 }
 
-function printPosTitles($positions) { //prints results from a select statement
+function printPosTitles($positions, $selected) { //prints results from a select statement
         echo "<select name='postitle'>";
 	while ($row = OCI_Fetch_Array($positions, OCI_BOTH)) {
-                echo "<option value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+                
+                if (isset($selected) && $selected == $row['TITLE']) {
+                        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+                }
+                else {echo "<option value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";}
 	}
         echo "</select>";
-	echo "</table>";
-
 }
 
 function printTypes($types) { 

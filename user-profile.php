@@ -78,6 +78,7 @@ $db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
         <input type="submit" value="Add Company" name="add_company"></p>
         </form>
 </div>
+<div class="clear-both"></div>
 
 
 
@@ -101,7 +102,7 @@ if ($db_conn) {
                                         ":bind2" =>date("M d Y, g:ia "),
                                         ":bind3" => $_POST['companyname'],
                                         ":bind4" => 101, // dummy value, coop student id
-                                        ":bind5" => "Co-op Student",//$_POST['postitle'],
+                                        ":bind5" => $_POST['postitle'],
                                         ":bind6" => $_POST['rating']
                                         );
                                         $alltuples = array (
