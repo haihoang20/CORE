@@ -60,13 +60,16 @@ size="18">
 <!-- Advanced Search of Reviews -->
 <p> Advanced search of the reviews: </p>
 <form method="GET" action="oracle-test.php">
-<p><font size="2"> Company Name </font><input type="text" name="companyname" size="6">
-<font size="2"> Position Title </font><input type="text" name="postitle" size="6">
-<font size="2"> Rating </font><input type="text" name="rating" size="6">
+<p><font size="2"> Company Name contains </font><input type="text" name="companyname" size="6">
+<font size="2"> Company Type/Industry </font><input type="text" name="ctype" size="6">
+<font size="2"> Position Title contains </font><input type="text" name="postitle" size="6">
+<font size="2"> Minimum Rating </font><input type="text" name="rating" size="6">
 <font size="2"> Earliest Written Date (DD-MM-YY) </font><input type="text" name="datebound" size="6">
-<font size="2"> Comment contains... </font><input type="text" name="commentcontains" size="6">
+<font size="2"> Comment contains </font><input type="text" name="commentcontains" size="6">
 <font size="2"> Skills desired (separate each by comma) </font><input type="text" name="skillsreq" size="6">
 <font size="2"> City </font><input type="text" name="city" size="6">
+<font size="2"> Province/State </font><input type="text" name="province" size="6">
+<font size="2"> Country </font><input type="text" name="country" size="6">
 </p><p><input type="submit" value="Go" name="advsearch"></p>
 </form>
 
@@ -369,20 +372,17 @@ if ($db_conn) {
 					OCICommit($db_conn);
 				} else
 					if (array_key_exists('simplesearch', $_GET)) {
-						$sphrase = $_GET['searchPhrase'];
-						$sphrase = "'%".$sphrase."%'";
-
-						$list1 = array (
-							":bind1" => $sphrase,
+						$tuple = array (
+							":bind1" => $_GET['searchPhrase']
 						);
-						$allrows = array ( 
-							$list1 
+						$alltuples = array (
+							$tuple
 						);
-						$results = executeBoundSQL("select * from review where companyname like :bind1 or postitle like :bind1 or review_comment like :bind1", $$allrows);
-						echo $results;
-						printReviews($results);
+						executeBoundSQL("select * from review where companyname like '%:bind1%'", $alltuples);
 						OCICommit($db_conn);
 
+
+						// $sphrase = $_GET['searchPhrase'];
 						// $sphrase = "'%".$sphrase."%'";
 						
 						// $sqlquery = "select * from review where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
@@ -392,25 +392,28 @@ if ($db_conn) {
 						// OCICommit($db_conn);
 					} else
 						if (array_key_exists('advsearch', $_GET)) {
-							$cname = "'%".$_GET['companyname']."%'";
-							$postitle = "'%".$_GET['postitle']."%'";
+							$cname = $_GET['companyname'];
+							$ctype = $_GET['ctype'];
+							$postitle = $_GET['postitle'];
 							$rating = $_GET['rating'];
-							$ccontains = "'%".$_GET['commentcontains']."%'";
+							$ccontains = $_GET['commentcontains'];
 							$dateb = $_GET['datebound'];
 							$skills = $_GET['skillsreq'];
-							$location = $_GET['loc'];
-							
+							$city = $_GET['city'];
+							$prov = $_GET['province'];
+							$country = $_GET['country'];
+
 							$selectwhat = '*';
 							$andfrom = '';
 							$reqs = '';
 							if (!empty($cname)) {
-								$reqs = $reqs."r.companyname LIKE $cname";
+								$reqs = $reqs."r.companyname LIKE '%$cname%'";
 							}
 							if (!empty($postitle)) {
 								if (!empty($reqs)) {
 									$reqs = $reqs." and ";
 								}
-								$reqs = $reqs."r.postitle like $postitle";
+								$reqs = $reqs."r.postitle like '%$postitle%'";
 							}
 							if (!empty($rating)) {
 								if (!empty($reqs)) {
@@ -429,7 +432,7 @@ if ($db_conn) {
 								if (!empty($reqs)) {
 									$reqs = $reqs." and ";	
 								}
-								$reqs = $reqs."r.review_comment like $ccontains";
+								$reqs = $reqs."r.review_comment like '%$ccontains%'";
 							}
 							if (!empty($skills)) {
 								$selectwhat = "r.rid, r.review_comment, r.review_date, r.companyname, r.postitle, r.rating";
@@ -452,12 +455,33 @@ if ($db_conn) {
 								$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname from positionrequiresskill where sname in (select name as sname from skills where $sqlskills))";
 								executePlainSQL($sqlmakeview);
 							}
-							if (!empty($location)) {
+							if (!empty($city)) {
 								$andfrom = $andfrom.", companylocation cl";
 								if (!empty($reqs)) {
 									$reqs = $reqs." and ";
 								}
-								$reqs = $reqs."r.";
+								$reqs = $reqs."r.companyname = cl.cname and cl.city = '$city'";
+							}
+							if (!empty($prov)) {
+								$andfrom = $andfrom.", companylocation cl2";
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";
+								}
+								$reqs = $reqs."r.companyname = cl2.cname and cl2.province = '$prov'";
+							}
+							if (!empty($country)) {
+								$andfrom = $andfrom.", companylocation cl3, location l";
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";
+								}
+								$reqs = $reqs."r.companyname = cl3.cname and cl3.city = l.city and cl3.province = l.province and l.country = '$country'";	
+							}
+							if (!empty($ctype)) {
+								$andfrom = $andfrom.", coopcompany cc";
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";
+								}
+								$reqs = $reqs."r.companyname = cc.name and cc.type = '$ctype'";
 							}
 
 							$sqlquery = "select $selectwhat from review r $andfrom where $reqs";
@@ -467,8 +491,6 @@ if ($db_conn) {
 								executePlainSQL("drop view validpostitlecname");
 							}
 							OCICommit($db_conn);
-							echo $skillsArray;
-							echo $sqlskills;
 						} else
           if (array_key_exists('getreviews', $_GET)){
             $review = executePlainSQL("select * from review");
