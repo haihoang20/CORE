@@ -50,7 +50,26 @@ size="18">
 <input type="submit" value="run hardcoded queries" name="dostuff"></p>
 </form>
 
+<!-- Simple Search of Reviews -->
+<p> Simple search of the reviews: </p>
+<form method="GET" action="oracle-test.php">
+<p><input type="text" name="searchPhrase" size="6">
+<input type="submit" value="Go" name="simplesearch"></p>
+</form>
 
+<!-- Advanced Search of Reviews -->
+<p> Advanced search of the reviews: </p>
+<form method="GET" action="oracle-test.php">
+<p><font size="2"> Company Name </font><input type="text" name="companyname" size="6">
+<font size="2"> Position Title </font><input type="text" name="postitle" size="6">
+<font size="2"> Rating </font><input type="text" name="rating" size="6">
+<font size="2"> Earliest Written Date (DD-MM-YY) </font><input type="text" name="datebound" size="6">
+<font size="2"> Comment contains... </font><input type="text" name="commentcontains" size="6">
+<font size="2"> Skills desired (separate each by comma) </font><input type="text" name="skillsreq" size="6"></p>
+<p><input type="submit" value="Go" name="advsearch"></p>
+</form>
+
+<!-- Simple Table Views -->
 <form method="GET" action="oracle-test.php">
 <input type="submit" value="Reviews" name="getreviews">
 <input type="submit" value="Companies" name="getcompanies">
@@ -349,6 +368,84 @@ if ($db_conn) {
 					//executePlainSQL("delete from tab1 where nid=1");
 					OCICommit($db_conn);
 				} else
+					if (array_key_exists('simplesearch', $_GET)) {
+						$sphrase = $_GET['searchPhrase'];
+						$sphrase = "'%".$sphrase."%'";
+						
+						$sqlquery = "select * from review where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
+						
+						$results = executePlainSQL($sqlquery);
+						printReviews($results);
+						OCICommit($db_conn);
+					} else
+						if (array_key_exists('advsearch', $_GET)) {
+							$cname = "'%".$_GET['companyname']."%'";
+							$postitle = "'%".$_GET['postitle']."%'";
+							$rating = $_GET['rating'];
+							$ccontains = "'%".$_GET['commentcontains']."%'";
+							$dateb = $_GET['datebound'];
+							$skills = $_GET['skillsreq'];
+							
+							$selectwhat = '*';
+							$andfrom = '';
+							$reqs = '';
+							if (!empty($cname)) {
+								$reqs = $reqs."r.companyname LIKE $cname";
+							}
+							if (!empty($postitle)) {
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";
+								}
+								$reqs = $reqs."r.postitle like $postitle";
+							}
+							if (!empty($rating)) {
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";
+								}
+								$reqs = $reqs."r.rating >= $rating";
+							}
+							if (!empty($dateb)) {
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";	
+								}
+								$reqs = $reqs."r.review_date >= $dateb";
+								// TODO: Check and match with date format in db
+							}
+							if (!empty($ccontains)) {
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";	
+								}
+								$reqs = $reqs."r.review_comment like $ccontains";
+							}
+							if (!empty($skills)) {
+								$selectwhat = "r.rid, r.review_comment, r.review_date, r.companyname, r.postitle, r.rating";
+								$andfrom = ", validpostitlecname vpc";
+								if (!empty($reqs)) {
+									$reqs = $reqs." and ";
+								}
+								$reqs = $reqs."r.companyname = vpc.cname and r.postitle = vpc.postitle";
+								
+								$skillsArray = explode(',', $skills);
+								$sqlskills = "";
+								foreach ($skillsArray as $key=>$value) {
+									$skillsArray[$key] = "'%".$value."%'";
+									if (!empty($sqlskills)) {
+										$sqlskills = $sqlskills." or ";
+									}
+									$sqlskills = $sqlskills."sname like $skillsArray[$key]";
+								}
+
+								$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname from positionrequiresskill where sname in (select name as sname from skills where $sqlskills))";
+								executePlainSQL($sqlmakeview);
+							}
+
+							$sqlquery = "select $selectwhat from review r $andfrom where $reqs";
+							$results = executePlainSQL($sqlquery);
+							printReviews($results);
+							OCICommit($db_conn);
+							echo $skillsArray;
+							echo $sqlskills;
+						} else
           if (array_key_exists('getreviews', $_GET)){
             $review = executePlainSQL("select * from review");
             printReviews($review);
