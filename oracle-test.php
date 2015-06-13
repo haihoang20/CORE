@@ -15,6 +15,8 @@
   extension.  You must also change the username and password on the
   OCILogon below to be your ORACLE username and password -->
 
+<?php require 'header.php' ?>
+
 <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
 <form method="POST" action="oracle-test.php">
 
