@@ -3,7 +3,6 @@ h1 {
         text-align: center;
 }
 h2 {
-        color: red;
 }
 
 .form {
@@ -34,4 +33,8 @@ h2 {
 
 .nav-menu li {
         margin-right:10px;
+}
+
+.error {
+        color: red;
 }

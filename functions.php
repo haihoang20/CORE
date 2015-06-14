@@ -118,8 +118,15 @@ function printReviews($review) { //prints results from a select statement
 }
 
 
-function printCompanyNames($companies, $selected) { //prints results from a select statement
+function printCompanyNames($companies, $selected) { // if selected, we're editing
         echo "<select name='companyname'>";
+        
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
 	while ($row = OCI_Fetch_Array($companies, OCI_BOTH)) {
                 if (isset($selected) && $selected == $row['NAME']) {
                         echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
@@ -129,8 +136,14 @@ function printCompanyNames($companies, $selected) { //prints results from a sele
         echo "</select>";
 }
 
-function printPosTitles($positions, $selected) { //prints results from a select statement
+function printPosTitles($positions, $selected) { // if selected, we're editing
         echo "<select name='postitle'>";
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
 	while ($row = OCI_Fetch_Array($positions, OCI_BOTH)) {
                 
                 if (isset($selected) && $selected == $row['TITLE']) {

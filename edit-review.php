@@ -29,16 +29,8 @@ $db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
                 printPosTitles($postitles, $row["POSTITLE"]);
 
 
-                echo "<p>Rating</p>  <select name='rating'>";
-                for ($i = 1; $i < 6; $i++) {
-                        if ($i == $row["RATING"]) {
-                                echo "<option selected value= " . $i . ">" . $i . "</option> ";
-                        }
-                        else {
-                                echo "<option value= " . $i . ">" . $i . "</option> ";
-                        }
-                };
-                echo "</select>";
+                echo "<p>Rating</p>";
+                echo "<input type='text' name='rating' value='" . $row["RATING"] ."' />";
 
                 echo "<p>Review Body</p> ";
                 echo "<p><textarea name='review_comment'>" . $row["REVIEW_COMMENT"] . "</textarea></p>"; 

@@ -19,9 +19,35 @@ require 'functions.php';
 include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
-?>
 
+$Error = "";
+		if (array_key_exists('submit_review', $_POST)) {
+                        
+                                if ('---' == $_POST['companyname']) {
+                                        $Error = "Please select a company name.";
+                                        $success = false;
+                                }
+        
+
+                                else if (empty($_POST['review_comment'])) {
+                                        $Error = "Review body cannot be empty.";
+                                        $success = false;
+                                }
+
+}
+
+		else if (array_key_exists('add_company', $_POST)) {
+                
+                                if (empty($_POST['companyname']) || empty($_POST['companyabout']) ) {
+                                        $Error = "Company name cannot be empty";
+                                } 
+
+                }
+
+echo '<div class="error">' . $Error . '</div>';
+?>
 <h2>User Profile</h2>
+
 
 <div class="review_form form">
         <h3>Write a new Review:</h3>
@@ -41,14 +67,8 @@ $db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
         }
         ?>
 
-        <p>Rating</p>
-        <select name="rating">
-        <option value=1>1</option>
-        <option value=2>2</option>
-        <option value=3>3</option>
-        <option value=4>4</option>
-        <option value=5>5</option>
-        </select>
+        <p>Rating (between 1 and 5)</p>
+        <input type="text" name="rating" />
 
         <p>Review Body</p>
         <p><textarea name="review_comment"></textarea></p>
@@ -92,17 +112,17 @@ date_default_timezone_set('America/Los_Angeles');
 if ($db_conn) {
 		if (array_key_exists('submit_review', $_POST)) {
 			//Getting the values from user and insert data into the table
-
-                                if (empty($_POST['review_comment'])) {
-                                        $Error = "review comment cannot be empty";
+                                
+                                $postitle = $_POST['postitle'];
+                                if ('---' == $postitle) {
+                                        $postitle = null;
                                 }
-                                else {
 			             $tuple = array (
                                         ":bind1" => $_POST['review_comment'],
                                         ":bind2" =>date("M d Y, g:ia "),
                                         ":bind3" => $_POST['companyname'],
                                         ":bind4" => 101, // dummy value, coop student id
-                                        ":bind5" => $_POST['postitle'],
+                                        ":bind5" => $postitle,
                                         ":bind6" => $_POST['rating']
                                         );
                                         $alltuples = array (
@@ -112,15 +132,10 @@ if ($db_conn) {
                                         executeBoundSQL("insert into review values ((select r1.rid from review r1 where not exists (select r2.rid from review r2 where r2.rid > r1.rid)) + 1, :bind1, :bind2, :bind3, :bind4,
                                                         :bind5, :bind6)", $alltuples);
                                         OCICommit($db_conn);
-                                }
 
 		} else
 			if (array_key_exists('add_company', $_POST)) {
 
-                                if (empty($_POST['companyname']) || empty($_POST['companyabout']) ) {
-                                        $Error = "Company name cannot be empty";
-                                } 
-                                else {
 			             $tuple = array (
                                         ":bind1" => $_POST['companyname'],
                                         ":bind2" => $_POST['companyabout'],
@@ -133,7 +148,6 @@ if ($db_conn) {
                                         executeBoundSQL("insert into coopcompany values (:bind1, :bind2, :bind3)", $alltuples); 
 
                                         OCICommit($db_conn);
-                                }
 			}
 
 	if ($_POST && $success) {
@@ -169,39 +183,4 @@ if ($db_conn) {
 	echo htmlentities($e['message']);
   }
                 
-
-/* OCILogon() allows you to log onto the Oracle database
-     The three arguments are the username, password, and database
-     You will need to replace "username" and "password" for this to
-     to work.
-     all strings that start with "$" are variables; they are created
-     implicitly by appearing on the left hand side of an assignment
-     statement */
-
-/* OCIParse() Prepares Oracle statement for execution
-      The two arguments are the connection and SQL query. */
-/* OCIExecute() executes a previously parsed statement
-      The two arguments are the statement which is a valid OCI
-      statement identifier, and the mode.
-      default mode is OCI_COMMIT_ON_SUCCESS. Statement is
-      automatically committed after OCIExecute() call when using this
-      mode.
-      Here we use OCI_DEFAULT. Statement is not committed
-      automatically when using this mode */
-
-/* OCI_Fetch_Array() Returns the next row from the result data as an
-     associative or numeric array, or both.
-     The two arguments are a valid OCI statement identifier, and an
-     optinal second parameter which can be any combination of the
-     following constants:
-
-     OCI_BOTH - return an array with both associative and numeric
-     indices (the same as OCI_ASSOC + OCI_NUM). This is the default
-     behavior.
-     OCI_ASSOC - return an associative array (as OCI_Fetch_Assoc()
-     works).
-     OCI_NUM - return a numeric array, (as OCI_Fetch_Row() works).
-     OCI_RETURN_NULLS - create empty elements for the NULL fields.
-     OCI_RETURN_LOBS - return the value of a LOB of the descriptor.
-     Default mode is OCI_BOTH.  */
 ?>
