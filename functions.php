@@ -154,6 +154,27 @@ function printPosTitles($positions, $selected) { // if selected, we're editing
         echo "</select>";
 }
 
+function printLocationNames($locations, $selected) { // if selected, we're editing
+        echo "<select name='location'>";
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
+	while ($row = OCI_Fetch_Array($locations, OCI_BOTH)) {
+                
+                //if (isset($selected) && $selected == $row['TITLE']) {
+                //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+                //}
+                echo "<option value='" . $row['CITY'] . "-" . $row['PROVINCE'] . "'>" . $row['CITY'] . " - " . $row['PROVINCE'] . "</option>";
+	}
+        echo "</select>";
+}
+
+
+
+
 function printTypes($types) { 
         echo "<select name='companytype'>";
 	while ($row = OCI_Fetch_Array($types, OCI_BOTH)) {
