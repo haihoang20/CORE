@@ -66,7 +66,9 @@ postitle varchar(50),
 rating integer not null,
 FOREIGN KEY (companyname) references CoopCompany(name),
 FOREIGN KEY (coopstudid) references CoopStudent(id),
-FOREIGN KEY (postitle) references PositionForCompany(title));
+FOREIGN KEY (postitle) references PositionForCompany(title),
+CHECK (rating > 0 AND rating < 6)
+);
 
 CREATE TABLE PositionRequiresSkill
 ( ptitle varchar(50) not null,
