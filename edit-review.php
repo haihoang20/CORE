@@ -25,7 +25,7 @@ $db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
                 printCompanyNames($companies, $row["COMPANYNAME"]);
 
                 echo "<p>Position Title</p>";
-                $postitles = executePlainSQL("select title from positionforcompany");
+                $postitles = executePlainSQL("select * from positionforcompany");
                 printPosTitles($postitles, $row["POSTITLE"]);
 
 

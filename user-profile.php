@@ -38,10 +38,22 @@ $Error = "";
 
 		else if (array_key_exists('add_company', $_POST)) {
                 
-                                if (empty($_POST['companyname']) || empty($_POST['companyabout']) ) {
-                                        $Error = "Company name cannot be empty";
+                                if (empty($_POST['companyname'])) {
+                                        $Error = "Company name cannot be empty.";
+                                        $success = false;
                                 } 
+                                else if (empty($_POST['companyabout'])) {
+                                        $Error = "'About Company' cannot be empty.";
+                                        $success = false;
+                                }
 
+                }
+		else if (array_key_exists('add_skill', $_POST)) {
+        
+                                if (empty($_POST['skillname'])) {
+                                        $Error = "Skill name cannot be empty.";
+                                        $success = false;
+                                } 
                 }
 
 echo '<div class="error">' . $Error . '</div>';
@@ -62,7 +74,7 @@ echo '<div class="error">' . $Error . '</div>';
                 printCompanyNames($companynames);
 
         echo "<p>Position Title</p>";
-                $postitles = executePlainSQL("select title from positionforcompany");
+                $postitles = executePlainSQL("select * from positionforcompany");
                 printPosTitles($postitles);
         }
         ?>
@@ -98,6 +110,21 @@ echo '<div class="error">' . $Error . '</div>';
         <input type="submit" value="Add Company" name="add_company"></p>
         </form>
 </div>
+
+<div class="add_skill_form form">
+        <h3>Add a Skill</h3>
+        <form method="POST" action="user-profile.php">
+
+        <p>Skill Name</p>
+        <p><input type="text" name="skillname"></p>
+        <p>Description</p>
+        <p><textarea name="skilldescription"></textarea></p>
+        <input type="submit" value="Add Skill" name="add_skill"></p>
+        </form>
+</div>
+
+
+
 <div class="clear-both"></div>
 
 
@@ -149,6 +176,21 @@ if ($db_conn) {
 
                                         OCICommit($db_conn);
 			}
+			if (array_key_exists('add_skill', $_POST)) {
+
+			             $tuple = array (
+                                        ":bind1" => $_POST['skillname'],
+                                        ":bind2" => $_POST['skilldescription'],
+                                        );
+                                        $alltuples = array (
+                                                $tuple
+                                        );
+
+                                        executeBoundSQL("insert into skill values (:bind1, :bind2)", $alltuples); 
+
+                                        OCICommit($db_conn);
+			}
+
 
 	if ($_POST && $success) {
 		//POST-REDIRECT-GET -- See http://en.wikipedia.org/wiki/Post/Redirect/Get

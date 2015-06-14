@@ -454,7 +454,7 @@ if ($db_conn) {
 									$sqlskills = $sqlskills."sname like $skillsArray[$key]";
 								}
 
-								$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname from positionrequiresskill where sname in (select name as sname from skills where $sqlskills))";
+								$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname from positionrequiresskill where sname in (select name as sname from skill where $sqlskills))";
 								executePlainSQL($sqlmakeview);
 							}
 							if (!empty($city)) {
@@ -520,7 +520,7 @@ if ($db_conn) {
             OCICommit($db_conn);
           } else
           if (array_key_exists('getskills', $_GET)){
-            $skills = executePlainSQL("select * from skills");
+            $skills = executePlainSQL("select * from skill");
             printSkills($skills);
             OCICommit($db_conn);
           } else
