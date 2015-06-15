@@ -64,8 +64,10 @@ companyname varchar(250),
 coopstudid integer not null,
 postitle varchar(50),
 rating integer not null,
-FOREIGN KEY (companyname) references CoopCompany(name),
-FOREIGN KEY (coopstudid) references CoopStudent(id),
+FOREIGN KEY (companyname) references CoopCompany(name)
+	ON DELETE CASCADE,
+FOREIGN KEY (coopstudid) references CoopStudent(id)
+	ON DELETE CASCADE,
 FOREIGN KEY (postitle) references PositionForCompany(title));
 
 CREATE TABLE PositionRequiresSkill

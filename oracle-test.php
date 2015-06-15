@@ -14,44 +14,22 @@
   Apache server can run it, and you must rename it to have a ".php"
   extension.  You must also change the username and password on the
   OCILogon below to be your ORACLE username and password -->
+
+<?php
+// Start the session
+session_start();
+?>
+
+<html>
+
+
 <head>
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="822842326093-oo9m0j9se9020sqt97q0hf26rq3uqf37.apps.googleusercontent.com">
+
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 
   </head>
-  <body>
-    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
-    <script>
-      function onSignIn(googleUser) {
-        // Useful data for your client-side scripts:
-        var profile = googleUser.getBasicProfile();
-        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-        console.log("Name: " + profile.getName());
-        console.log("Image URL: " + profile.getImageUrl());
-        console.log("Email: " + profile.getEmail());
-
-        // The ID token you need to pass to your backend:
-        var id_token = googleUser.getAuthResponse().id_token;
-        console.log("ID Token: " + id_token);
-
-        var divid = document.getElementById("welcome");
-        var tname = document.createElement("h1");
-        tname.innerHTML = "Welcome Back " + profile.getName() + "!";
-
-        divid.appendChild(tname);
-
-
-        window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/oracle-test.php?id=" + profile.getEmail() + "#";
-
-      }
-
-      
-    </script>
-
-
-  </body>
-
 <div id="welcome"></div>
 <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
 <form method="POST" action="oracle-test.php">
@@ -98,6 +76,7 @@ size="18">
 
     var divid = document.getElementById("welcome");
     divid.innerHTML = "";
+
     window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/oracle-test.php?";
   }
 </script>
@@ -132,6 +111,7 @@ size="18">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
 </form>
 
+
 <?php
 
 //this tells the system that it's no longer just parsing
@@ -144,9 +124,29 @@ $db_conn = OCILogon("ora_n6o8", "a15724032", "ug");
 //echo "TOKEN : ".$_GET['id']."<br>";
 
 
-$email = $_GET['id'];
+//$email = $_SESSION['session_email'];
+//$email_list = executePlainSQL("select email from admin");
 
-$email_list = executePlainSQL("select email from admin");
+//echo "id is " . $_GET["id"] . "<br>";
+$cookie_name = "user";
+
+if(!is_null($_GET["id"])){
+	echo "IN HERE" . "<br>";
+
+	//$cookie_value = $_GET["id"];
+	setcookie("user", $_GET["id"], time() + (86400 * 30), "/"); // 86400 = 1 day
+	sleep(5);
+}
+
+
+    echo "Cookie name is '" . $cookie_name . "'<br>";
+    echo "Value is: " . $_COOKIE[$cookie_name];
+
+    $email =  $_COOKIE[$cookie_name];
+
+
+
+//$email = $_SESSION['session_email'];
 
 
 if($email){
@@ -156,8 +156,16 @@ if($email){
 		break;
 	}
 }
-
 }
+
+
+
+//var_dump($_SESSION['session_email']);
+//echo session_id();
+
+echo "<br> The email is " . $email . "<br>";  
+//echo "<br> Session is " . $_SESSION["session_email"] . "<br>";
+
 
 
 function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL command and executes it
@@ -593,3 +601,4 @@ if ($db_conn) {
      OCI_RETURN_LOBS - return the value of a LOB of the descriptor.
      Default mode is OCI_BOTH.  */
 ?>
+</html>
