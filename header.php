@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<?php
+require 'config.php';
+?>
 <head>
  <link rel="stylesheet" href="style.css"> 
 <title>The Chubby Donuts</title>
