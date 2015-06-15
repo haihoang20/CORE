@@ -136,6 +136,28 @@ function printCompanyNames($companies, $selected) { // if selected, we're editin
         echo "</select>";
 }
 
+function printTypeNames($types, $selected) { 
+        echo "<select name='company_type'>";
+        
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
+	while ($row = OCI_Fetch_Array($types, OCI_BOTH)) {
+                if (isset($selected) && $selected == $row['TYPE']) {
+                        echo "<option selected value='" . $row['TYPE'] . "'>" . $row['TYPE'] . "</option>";
+                }
+                else {echo "<option value='" . $row['TYPE'] . "'>" . $row['TYPE'] . "</option>";}
+	}
+        echo "</select>";
+}
+
+
+
+
+
 function printPosTitles($positions, $selected) { // if selected, we're editing
         echo "<select name='postitle'>";
         if (!isset($selected)) {
@@ -172,6 +194,26 @@ function printLocationNames($locations, $selected) { // if selected, we're editi
         echo "</select>";
 }
 
+/*Print form select box for skills */
+function printSkillNames($skills) { 
+        echo "<select multiple name='skill'>";
+        //if (!isset($selected)) {
+        // echo "<option selected value='---'>---</option>";
+        //}
+        //else {
+        // echo "<option value='---'>---</option>";
+        //}
+	while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
+                
+                //if (isset($selected) && $selected == $row['TITLE']) {
+                //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+                //}
+                echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+	}
+        echo "</select>";
+}
+
+
 
 
 
@@ -194,7 +236,7 @@ function printCompany($company) { //prints results from a select statement
 	echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
 
 	while ($row = OCI_Fetch_Array($company, OCI_BOTH)) {
-		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["ABOUT"] . "</td><td>" . $row["TYPE"] . "</td></tr>"; //or just use "echo $row[0]"
+		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["ABOUT"] . "</td><td>" . $row["TYPE"] . "</td> <td><a href='edit-company.php?name=" . $row["NAME"] . "'>Edit Company</a></td> </tr>";
 	}
 	echo "</table>";
 

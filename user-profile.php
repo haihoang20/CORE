@@ -1,3 +1,4 @@
+
 <?php
 require 'functions.php';
 include 'header.php';
@@ -208,6 +209,8 @@ echo '<div class="error">' . $Error . '</div>';
         <p><input type="text" name="positiontitle"></p>
         <p>Position Duties</p>
         <p><textarea name="positionduties"></textarea></p>
+
+        
         <?php
         if ($db_conn) {
 
@@ -219,6 +222,11 @@ echo '<div class="error">' . $Error . '</div>';
                 echo "<p>Location</p>";
                 $locations = executePlainSQL("select city, province from location");
                 printLocationNames($locations);
+
+                
+                echo "<p>Required Skills</p>";
+                $skills = executePlainSQL("select name from skill");
+                printSkillNames($skills);
         } ?>
 
         <div></div>
