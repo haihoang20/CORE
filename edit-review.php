@@ -3,7 +3,28 @@ require 'functions.php';
 include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
+
+$Error = "";
+                if (array_key_exists('submit_review', $_POST)) {
+                                if ('---' == $_POST['companyname']) {
+                                        $Error = "Please select a company name.";
+                                        $success = false;
+                                }
+        
+                                else if (empty($_POST['review_comment'])) {
+                                        $Error = "Review body cannot be empty.";
+                                        $success = false;
+                                }                        
+                                else if (empty($_POST['rating'])) {
+                                        $Error = "Rating cannot be empty.";
+                                        $success = false;
+                                }                        
+
+}
+
+echo '<div class="error">' . $Error . '</div>';
 ?>
+
 
 <div class="edit_review form">
         <h3>Edit Review:</h3>

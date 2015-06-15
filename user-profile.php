@@ -178,7 +178,7 @@ echo '<div class="error">' . $Error . '</div>';
         echo "<p>Company Type</p>";
                 $types = executePlainSQL("select type from companytype");
                 echo "<p>";
-                printTypes($types);
+                printTypeNames($types);
                 echo "</p>";
         }
         ?>

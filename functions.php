@@ -1,25 +1,7 @@
-<!--Test Oracle file for UBC CPSC304 2011 Winter Term 2
-  Created by Jiemin Zhang
-  Modified by Simona Radu
-  This file shows the very basics of how to execute PHP commands
-  on Oracle.
-  specifically, it will drop a table, create a table, insert values
-  update values, and then query for values
-
-  IF YOU HAVE A TABLE CALLED "tab1" IT WILL BE DESTROYED
-
-  The script assumes you already have a server set up
-  All OCI commands are commands to the Oracle libraries
-  To get the file to work, you must place it somewhere where your
-  Apache server can run it, and you must rename it to have a ".php"
-  extension.  You must also change the username and password on the
-  OCILogon below to be your ORACLE username and password -->
 <?php
-function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL command and executes it
-	//echo "<br>running ".$cmdstr."<br>";
+function executePlainSQL($cmdstr) { 
 	global $db_conn, $success;
-	$statement = OCIParse($db_conn, $cmdstr); //There is a set of comments at the end of the file that describe some of the OCI specific functions and how they work
-
+	$statement = OCIParse($db_conn, $cmdstr); 
 	if (!$statement) {
 		echo "<br>Cannot parse the following command: " . $cmdstr . "<br>";
 		$e = OCI_Error($db_conn); // For OCIParse errors pass the
@@ -78,20 +60,8 @@ function executeBoundSQL($cmdstr, $list) {
         return $statement;
 } 
 
-function printResult($result) { //prints results from a select statement
-        echo "<br>Got data from table tab1:<br>";
-        echo "<table>";
-        echo "<tr><th>ID</th><th>Name</th></tr>";
-
-        while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
-                echo "<tr><td>" . $row["NID"] . "</td><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]" 
-        }
-        echo "</table>";
-
-} 
-
-
-function printCompanyType($companytype) { //prints results from a select statement
+/*** functions to display table info ***/
+function printCompanyType($companytype) { 
 	echo "<br>Company Type:<br>";
 	echo "<table>";
 	echo "<tr><th>Type</th><th>Description</th></tr>";
@@ -103,7 +73,7 @@ function printCompanyType($companytype) { //prints results from a select stateme
 
 }
 
-function printReviews($review) { //prints results from a select statement
+function printReviews($review) { 
 	echo "<br>Reviews:<br>";
 	echo "<table>";
 	echo "<tr><th>RID</th><th>Date</th><th>Company</th><th>Position</th><th>Rating</th><th>Comment</th></tr>";
@@ -116,119 +86,6 @@ function printReviews($review) { //prints results from a select statement
 	echo "</table>";
 
 }
-
-
-function printCompanyNames($companies, $selected) { // if selected, we're editing
-        echo "<select name='companyname'>";
-        
-        if (!isset($selected)) {
-         echo "<option selected value='---'>---</option>";
-        }
-        else {
-         echo "<option value='---'>---</option>";
-        }
-	while ($row = OCI_Fetch_Array($companies, OCI_BOTH)) {
-                if (isset($selected) && $selected == $row['NAME']) {
-                        echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
-                }
-                else {echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";}
-	}
-        echo "</select>";
-}
-
-function printTypeNames($types, $selected) { 
-        echo "<select name='company_type'>";
-        
-        if (!isset($selected)) {
-         echo "<option selected value='---'>---</option>";
-        }
-        else {
-         echo "<option value='---'>---</option>";
-        }
-	while ($row = OCI_Fetch_Array($types, OCI_BOTH)) {
-                if (isset($selected) && $selected == $row['TYPE']) {
-                        echo "<option selected value='" . $row['TYPE'] . "'>" . $row['TYPE'] . "</option>";
-                }
-                else {echo "<option value='" . $row['TYPE'] . "'>" . $row['TYPE'] . "</option>";}
-	}
-        echo "</select>";
-}
-
-
-
-
-
-function printPosTitles($positions, $selected) { // if selected, we're editing
-        echo "<select name='postitle'>";
-        if (!isset($selected)) {
-         echo "<option selected value='---'>---</option>";
-        }
-        else {
-         echo "<option value='---'>---</option>";
-        }
-	while ($row = OCI_Fetch_Array($positions, OCI_BOTH)) {
-                
-                if (isset($selected) && $selected == $row['TITLE']) {
-                        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
-                }
-                else {echo "<option value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";}
-	}
-        echo "</select>";
-}
-
-function printLocationNames($locations, $selected) { // if selected, we're editing
-        echo "<select name='location'>";
-        if (!isset($selected)) {
-         echo "<option selected value='---'>---</option>";
-        }
-        else {
-         echo "<option value='---'>---</option>";
-        }
-	while ($row = OCI_Fetch_Array($locations, OCI_BOTH)) {
-                
-                //if (isset($selected) && $selected == $row['TITLE']) {
-                //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
-                //}
-                echo "<option value='" . $row['CITY'] . "-" . $row['PROVINCE'] . "'>" . $row['CITY'] . " - " . $row['PROVINCE'] . "</option>";
-	}
-        echo "</select>";
-}
-
-/*Print form select box for skills */
-function printSkillNames($skills) { 
-        echo "<select multiple name='skill'>";
-        //if (!isset($selected)) {
-        // echo "<option selected value='---'>---</option>";
-        //}
-        //else {
-        // echo "<option value='---'>---</option>";
-        //}
-	while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
-                
-                //if (isset($selected) && $selected == $row['TITLE']) {
-                //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
-                //}
-                echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
-	}
-        echo "</select>";
-}
-
-
-
-
-
-function printTypes($types) { 
-        echo "<select name='companytype'>";
-	while ($row = OCI_Fetch_Array($types, OCI_BOTH)) {
-                echo "<option value='" . $row['TYPE'] . "'>" . $row['TYPE'] . "</option>";
-	}
-        echo "</select>";
-	echo "</table>";
-
-}
-
-
-
 
 function printCompany($company) { //prints results from a select statement
 	echo "<br>Companies:<br>";
@@ -290,6 +147,101 @@ function printLocation($location) { //prints results from a select statement
 	echo "</table>";
 
 }
+
+/******* Functions for generating form fields *******/
+
+function printCompanyNames($companies, $selected) { // if selected, we're editing
+        echo "<select name='companyname'>";
+        
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
+	while ($row = OCI_Fetch_Array($companies, OCI_BOTH)) {
+                if (isset($selected) && $selected == $row['NAME']) {
+                        echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                }
+                else {echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";}
+	}
+        echo "</select>";
+}
+
+function printTypeNames($types, $selected) { 
+        echo "<select name='company_type'>";
+        
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
+	while ($row = OCI_Fetch_Array($types, OCI_BOTH)) {
+                if (isset($selected) && $selected == $row['TYPE']) {
+                        echo "<option selected value='" . $row['TYPE'] . "'>" . $row['TYPE'] . "</option>";
+                }
+                else {echo "<option value='" . $row['TYPE'] . "'>" . $row['TYPE'] . "</option>";}
+	}
+        echo "</select>";
+}
+
+
+function printPosTitles($positions, $selected) { // if selected, we're editing
+        echo "<select name='postitle'>";
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
+	while ($row = OCI_Fetch_Array($positions, OCI_BOTH)) {
+                
+                if (isset($selected) && $selected == $row['TITLE']) {
+                        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+                }
+                else {echo "<option value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";}
+	}
+        echo "</select>";
+}
+
+function printLocationNames($locations, $selected) { // if selected, we're editing
+        echo "<select name='location'>";
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
+	while ($row = OCI_Fetch_Array($locations, OCI_BOTH)) {
+                
+                //if (isset($selected) && $selected == $row['TITLE']) {
+                //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+                //}
+                echo "<option value='" . $row['CITY'] . "-" . $row['PROVINCE'] . "'>" . $row['CITY'] . " - " . $row['PROVINCE'] . "</option>";
+	}
+        echo "</select>";
+}
+
+function printSkillNames($skills) { 
+        echo "<select multiple name='skill'>";
+        //if (!isset($selected)) {
+        // echo "<option selected value='---'>---</option>";
+        //}
+        //else {
+        // echo "<option value='---'>---</option>";
+        //}
+	while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
+                
+                //if (isset($selected) && $selected == $row['TITLE']) {
+                //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+                //}
+                echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+	}
+        echo "</select>";
+}
+
+
 /* OCILogon() allows you to log onto the Oracle database
      The three arguments are the username, password, and database
      You will need to replace "username" and "password" for this to

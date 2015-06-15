@@ -28,7 +28,7 @@ $db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
 
                 echo "<p>About Company</p> ";
                 echo "<p><textarea name='about_company'>" . $row["ABOUT"] . "</textarea></p>"; 
-                echo "<input type='hidden' name='old_name' value=" . $row["NAME"] . "/>";
+                echo "<input type='hidden' name='old_name' value='" . $row["NAME"] . "'/>";
                 echo "<input type='submit' value='Update Company' name='submit_edited_company'></p>";
                 //echo "<input type='submit' value='Delete Company' name='delete_company'></p></form>";
                 
