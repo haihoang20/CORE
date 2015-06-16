@@ -134,12 +134,13 @@ function helperAddOptionalAnd($var) {
 	return $var;
 }
 
-/** Search for reviews satisfying any subset of given criteria:
-	- word/phrase contained in the company name, company type/industry, position title, review comment, skills required 
-	- rating >= to a given rating
-	- date >= a given date
-	- companies located in given city, province, and/or country
-**/
+/* 
+ * Search for reviews satisfying any subset of given criteria:
+ * - word/phrase contained in the company name, company type/industry, position title, review comment, skills required 
+ * - rating >= to a given rating
+ * - date >= a given date
+ *- companies located in given city, province, and/or country
+ */
 function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, $skills, $city, $prov, $country) {
 	$selectwhat = '*'; 
 	$andfrom = '';
@@ -219,9 +220,48 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 	}
 }
 
+/*
+ * Search for company positions that require an exact skillset 
+ * (Division Query)
+ */
+function skillsetSearch($skillset) {
+	$p1 = '';
+	$p2 = '';
+	echo "<p>You selected the following skillset: <br />";
+	foreach ($skillset as $s) {
+		echo $s."<br />";
+		if (!empty($p1)) 
+			$p1 = $p1." or";
+		$p1 = $p1." s.name = '".$s."'";
+		if (!empty($p2))
+			$p2 = $p2." or";
+		$p2 = $p2." prs.sname = '".$s."'";
+	}
+	echo "</p>";
 
-function skillsetSearch($skillset, $) {
-
+	$viewqry = "create view invalidposskill as (select pfc.cname, pfc.title, s.name as sname 
+												from positionforcompany pfc, skills s 
+												where $p1 
+												minus 
+												(select prs.cname, prs.ptitle, prs.sname 
+												 from positionrequiresskill prs 
+												 where $p2))";
+	executePlainSQL($viewqry);
+	$qry = "select cname, title 
+			from positionforcompany 
+			minus 
+			select cname, title 
+			from invalidposskill";
+	$results = executePlainSQL($qry);		
+	executePlainSQL("drop view invalidposskill");
+	
+	// Display the Results
+	echo "<br>Positions:<br>";
+	echo "<table>";
+	echo "<tr><th>Title</th><th>Company</th></tr>";
+	while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
+		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td></tr>";		}
+	echo "</table>";
 }
 
 // Connect Oracle...
@@ -260,46 +300,8 @@ if ($db_conn) {
 		echo "<p><input type='submit' value='Submit' name='skillsetsearch'></p></form>";	
 	} else
 	if (array_key_exists('skillsetsearch', $_GET)) {
-		echo "<p>You selected the following skillset: <br />";
 		$ss = $_GET['skill'];
-		$p1 = '';
-		$p2 = '';
-		foreach ($ss as $s) {
-			echo $s."<br />";
-
-			if (!empty($p1)) 
-				$p1 = $p1." or";
-			$p1 = $p1." s.name = '".$s."'";
-			if (!empty($p2))
-				$p2 = $p2." or";
-			$p2 = $p2." prs.sname = '".$s."'";
-		}
-		echo "</p>";
-
-		$viewqry = "create view invalidposskill as (select pfc.cname, pfc.title, s.name as sname 
-													from positionforcompany pfc, skills s 
-													where $p1 
-													minus 
-													(select prs.cname, prs.ptitle, prs.sname 
-													 from positionrequiresskill prs 
-													 where $p2))";
-		executePlainSQL($viewqry);
-		$qry = "select cname, title 
-				from positionforcompany 
-				minus 
-				select cname, title 
-				from invalidposskill";
-		$results = executePlainSQL($qry);		
-		
-		// Display the Results
-		echo "<br>Positions:<br>";
-		echo "<table>";
-		echo "<tr><th>Title</th><th>Company</th></tr>";
-		while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
-			echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td></tr>";		}
-		echo "</table>";
-
-		executePlainSQL("drop view invalidposskill");
+		skillsetsearch($ss);
 		OCICommit($db_conn);
 	} else
       if (array_key_exists('getreviews', $_GET)){
