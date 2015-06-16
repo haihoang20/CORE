@@ -44,16 +44,17 @@ function printCompany($company) { //prints results from a select statement
 
 }
 
-function printPosition($position) { //prints results from a select statement
-	echo "<br>Positions:<br>";
-	echo "<table>";
-	echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>City</th><th>Province</th><th>Type</th></tr>";
+function printPositionWithoutSkills($position) { 
+		echo "<td>" . $position["TITLE"] . "</td><td>" . $position["CNAME"] . "</td><td>" . $position["DUTIES"] . "</td><td>";
+                printSkillsForPosition($position['TITLE'], $position['CNAME']);
+}
 
-	while ($row = OCI_Fetch_Array($position, OCI_BOTH)) {
-		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["DUTIES"] . "</td><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td></tr>"; //or just use "echo $row[0]"
-	}
-	echo "</table>";
-
+function printSkillsForPosition($skills) {
+        
+	while ($skill = OCI_Fetch_Array($skills, OCI_BOTH)) {
+		echo $skill["SNAME"] . "  ";
+        }
+        
 }
 
 
@@ -169,7 +170,7 @@ function printLocationNames($locations, $selected) { // if selected, we're editi
 }
 
 function printSkillNames($skills) { 
-        echo "<select multiple name='skill'>";
+        echo "<select multiple name='skill[]'>";
         //if (!isset($selected)) {
         // echo "<option selected value='---'>---</option>";
         //}
