@@ -4,7 +4,7 @@ drop table CompanyType cascade constraints;
 drop table CoopStudent cascade constraints;
 drop table Admin cascade constraints;
 drop table PositionForCompany cascade constraints;
-drop table Skills cascade constraints;
+drop table Skill cascade constraints;
 drop table PositionRequiresSkill cascade constraints;
 drop table Department cascade constraints;
 drop table CompanyHiresForDept cascade constraints;
@@ -23,7 +23,7 @@ CREATE TABLE Admin
 name varchar(50) NOT NULL,
 email varchar(50) NOT NULL);
 
-CREATE TABLE Skills
+CREATE TABLE Skill
 (name varchar(50) PRIMARY KEY,
 description varchar(100) NOT NULL);
 
@@ -64,11 +64,19 @@ companyname varchar(250),
 coopstudid integer not null,
 postitle varchar(50),
 rating integer not null,
+<<<<<<< HEAD
 FOREIGN KEY (companyname) references CoopCompany(name)
 	ON DELETE CASCADE,
 FOREIGN KEY (coopstudid) references CoopStudent(id)
 	ON DELETE CASCADE,
 FOREIGN KEY (postitle) references PositionForCompany(title));
+=======
+FOREIGN KEY (companyname) references CoopCompany(name),
+FOREIGN KEY (coopstudid) references CoopStudent(id),
+FOREIGN KEY (postitle) references PositionForCompany(title),
+CHECK (rating > 0 AND rating < 6)
+);
+>>>>>>> master
 
 CREATE TABLE PositionRequiresSkill
 ( ptitle varchar(50) not null,
@@ -77,7 +85,7 @@ sname varchar(250) not null,
 PRIMARY KEY (ptitle, cname, sname),
 FOREIGN KEY (ptitle) references PositionForCompany(title),
 FOREIGN KEY (cname) references CoopCompany(name),
-FOREIGN KEY (sname) references Skills(name));
+FOREIGN KEY (sname) references Skill(name));
 
 CREATE TABLE CompanyHiresForDept
 (cname varchar(50) NOT NULL,
@@ -146,19 +154,19 @@ insert into Admin values
 (105, 'Eliza', 'liza@core.com');
 
 
-insert into Skills values
+insert into Skill values
 ('C++', 'know how to code in C++');
 
-insert into Skills values
+insert into Skill values
 ('Java', 'know how to code in Java');
 
-insert into Skills values
+insert into Skill values
 ('Python', 'know how to code in Python');
 
-insert into Skills values
+insert into Skill values
 ('Threading', 'know how to program with threads');
 
-insert into Skills values
+insert into Skill values
 ('Time management', 'know how to manage your time');
 
 

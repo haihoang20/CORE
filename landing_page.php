@@ -26,7 +26,9 @@
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
 
-        window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/oracle-test.php?id=" + profile.getEmail() + "#";
+        document.cookie="valid=yes";
+
+        window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/home.php#" + profile.getEmail();
     }
 
 
