@@ -1,8 +1,6 @@
 <!-- Key functions for User-Profile Page -->
 
 <?php
-requires 'execute-sql-functions.php';
-
 
 /*** functions to display table info ***/
 

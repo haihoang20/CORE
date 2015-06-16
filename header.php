@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 require 'config.php';
-
+require 'execute-sql-functions.php';
 ?>
 <head>
  <link rel="stylesheet" href="style.css"> 
