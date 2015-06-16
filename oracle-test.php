@@ -17,7 +17,7 @@
 
 <?php require 'header.php' ?>
 
-<p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
+<!-- <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
 <form method="POST" action="oracle-test.php">
 
 <p><input type="submit" value="Reset" name="reset"></p>
@@ -26,67 +26,72 @@
 <p>Insert values into tab1 below:</p>
 <p><font size="2"> Number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Name</font></p>
-<form method="POST" action="oracle-test.php">
+<form method="POST" action="oracle-test.php"> -->
 <!--refresh page when submit-->
 
-   <p><input type="text" name="insNo" size="6"><input type="text" name="insName"
-size="18">
+   <!-- <p><input type="text" name="insNo" size="6"><input type="text" name="insName"
+size="18"> -->
 <!--define two variables to pass the value-->
 
-<input type="submit" value="insert" name="insertsubmit"></p>
-</form>
+<!-- <input type="submit" value="insert" name="insertsubmit"></p>
+</form> -->
 <!-- create a form to pass the values. See below for how to
 get the values-->
 
-<p> Update the name by inserting the old and new values below: </p>
+<!-- <p> Update the name by inserting the old and new values below: </p>
 <p><font size="2"> Old Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 New Name</font></p>
-<form method="POST" action="oracle-test.php">
+<form method="POST" action="oracle-test.php"> -->
 <!--refresh page when submit-->
 
-   <p><input type="text" name="oldName" size="6"><input type="text" name="newName"
-size="18">
+   <!-- <p><input type="text" name="oldName" size="6"><input type="text" name="newName"
+size="18"> -->
 <!--define two variables to pass the value-->
 
-<input type="submit" value="update" name="updatesubmit"></p>
+<!-- <input type="submit" value="update" name="updatesubmit"></p>
 <input type="submit" value="run hardcoded queries" name="dostuff"></p>
-</form>
+</form> -->
 
 <!-- Simple Search of Reviews -->
-<p> Simple search of the reviews: </p>
-<form method="GET" action="oracle-test.php">
-<p><input type="text" name="searchPhrase" size="6">
-<input type="submit" value="Go" name="simplesearch"></p>
-</form>
+<div class="simple_search form">
+  <h3> Simple search of the reviews: </h3>
+  <form method="GET" action="oracle-test.php">
+  <p><input type="text" name="searchPhrase" size="6">
+  <input type="submit" value="Go" name="simplesearch"></p>
+  </form>
+<!-- </div> -->
 
 <!-- Advanced Search of Reviews -->
-<p> Advanced search of the reviews: </p>
-<form method="GET" action="oracle-test.php">
-<p><font size="2"> Company Name contains </font><input type="text" name="companyname" size="6">
-<font size="2"> Company Type/Industry </font><input type="text" name="ctype" size="6">
-<font size="2"> Position Title contains </font><input type="text" name="postitle" size="6">
-<font size="2"> Minimum Rating </font><input type="text" name="rating" size="6">
-<font size="2"> Earliest Written Date (DD-MM-YY) </font><input type="text" name="datebound" size="6">
-<font size="2"> Comment contains </font><input type="text" name="commentcontains" size="6">
-<font size="2"> Skills desired (separate each by comma) </font><input type="text" name="skillsreq" size="6">
-<font size="2"> City </font><input type="text" name="city" size="6">
-<font size="2"> Province/State </font><input type="text" name="province" size="6">
-<font size="2"> Country </font><input type="text" name="country" size="6">
-</p><p><input type="submit" value="Go" name="advsearch"></p>
-</form>
+  <h3> Advanced search of the reviews: </h3>
+  <form method="GET" action="oracle-test.php">
+  <p><font size="2"> Company Name contains </font><input type="text" name="companyname" size="6">
+  <br><font size="2"> Company Type/Industry </font><input type="text" name="ctype" size="6">
+  <br><font size="2"> Position Title contains </font><input type="text" name="postitle" size="6">
+  <br><font size="2"> Minimum Rating </font><input type="text" name="rating" size="6">
+  <br><font size="2"> Earliest Written Date (DD-MM-YY) </font><input type="text" name="datebound" size="6">
+  <br><font size="2"> Comment contains </font><input type="text" name="commentcontains" size="6">
+  <br><font size="2"> Skills desired (separate each by comma) </font><input type="text" name="skillsreq" size="6">
+  <br><font size="2"> City </font><input type="text" name="city" size="6">
+  <br><font size="2"> Province/State </font><input type="text" name="province" size="6">
+  <br><font size="2"> Country </font><input type="text" name="country" size="6">
+  </p><p><input type="submit" value="Go" name="advsearch"></p>
+  </form>
+</div>
 
 <!-- Simple Table Views -->
-<form method="GET" action="oracle-test.php">
-<input type="submit" value="Reviews" name="getreviews">
-<input type="submit" value="Companies" name="getcompanies">
-<input type="submit" value="Positions" name="getpositions">
-<input type="submit" value="Company Types" name="getcompanytypes">
-<input type="submit" value="Departments" name="getdepartments">
-<input type="submit" value="Skills" name="getskills">
-<input type="submit" value="Skills By Position" name ="getpositionskills">
-<input type="submit" value="Locations" name="getlocations">
-<input type="submit" value="Company Locations" name="getcompanylocations">
-</form>
+<div class="query_buttons form">
+  <h3>View of Tables</h3>
+  <form method="GET" action="oracle-test.php">
+  <input type="submit" value="Reviews" name="getreviews">
+  <input type="submit" value="Companies" name="getcompanies">
+  <input type="submit" value="Positions" name="getpositions">
+  <input type="submit" value="Company Types" name="getcompanytypes">
+  <input type="submit" value="Departments" name="getdepartments">
+  <input type="submit" value="Skills" name="getskills">
+  <input type="submit" value="Skills By Position" name ="getpositionskills">
+  <input type="submit" value="Locations" name="getlocations">
+  <input type="submit" value="Company Locations" name="getcompanylocations">
+  </form>
 
 <p>
   <form method="GET" action="oracle-test.php">
@@ -104,6 +109,9 @@ size="18">
   <input type="submit" value="Departments With Most Jobs" name="deptjobs">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
 </form>
+</div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br>
 
 
 <?php
@@ -386,9 +394,9 @@ if ($db_conn) {
 
 						// $sphrase = $_GET['searchPhrase'];
 						// $sphrase = "'%".$sphrase."%'";
-						
+
 						// $sqlquery = "select * from review where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
-						
+
 						// $results = executePlainSQL($sqlquery);
 						// printReviews($results);
 						// OCICommit($db_conn);
@@ -425,14 +433,14 @@ if ($db_conn) {
 							}
 							if (!empty($dateb)) {
 								if (!empty($reqs)) {
-									$reqs = $reqs." and ";	
+									$reqs = $reqs." and ";
 								}
 								$reqs = $reqs."r.review_date >= $dateb";
 								// TODO: Check and match with date format in db
 							}
 							if (!empty($ccontains)) {
 								if (!empty($reqs)) {
-									$reqs = $reqs." and ";	
+									$reqs = $reqs." and ";
 								}
 								$reqs = $reqs."r.review_comment like '%$ccontains%'";
 							}
@@ -443,7 +451,7 @@ if ($db_conn) {
 									$reqs = $reqs." and ";
 								}
 								$reqs = $reqs."r.companyname = vpc.cname and r.postitle = vpc.postitle";
-								
+
 								$skillsArray = explode(',', $skills);
 								$sqlskills = "";
 								foreach ($skillsArray as $key=>$value) {
@@ -476,7 +484,7 @@ if ($db_conn) {
 								if (!empty($reqs)) {
 									$reqs = $reqs." and ";
 								}
-								$reqs = $reqs."r.companyname = cl3.cname and cl3.city = l.city and cl3.province = l.province and l.country = '$country'";	
+								$reqs = $reqs."r.companyname = cl3.cname and cl3.city = l.city and cl3.province = l.province and l.country = '$country'";
 							}
 							if (!empty($ctype)) {
 								$andfrom = $andfrom.", coopcompany cc";
