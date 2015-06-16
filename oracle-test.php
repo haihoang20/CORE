@@ -15,19 +15,14 @@
   extension.  You must also change the username and password on the
   OCILogon below to be your ORACLE username and password -->
 
-<?php
-// Start the session
-session_start();
-?>
-
 <html>
 
 
 <head>
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="822842326093-oo9m0j9se9020sqt97q0hf26rq3uqf37.apps.googleusercontent.com">
-
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+
 
   </head>
 <div id="welcome"></div>
@@ -66,21 +61,18 @@ size="18">
 <input type="submit" value="run hardcoded queries" name="dostuff"></p>
 </form>
 
-<a href="#" onclick="signOut();">Sign out</a>
 <script>
   function signOut() {
-    var auth2 = gapi.auth2.getAuthInstance();
+	var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log('User signed out.');
     });
 
-    var divid = document.getElementById("welcome");
-    divid.innerHTML = "";
-
-    window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/oracle-test.php?";
+	window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
   }
 </script>
 
+<a href="#" onclick="signOut();">Sign out</a>
 
 <form method="GET" action="oracle-test.php">
 <input type="submit" value="Reviews" name="getreviews">
@@ -111,43 +103,23 @@ size="18">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
 </form>
 
-
 <?php
-
 //this tells the system that it's no longer just parsing
 //html; it's now parsing PHP
 
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon("ora_n6o8", "a15724032", "ug");
 
-
-//echo "TOKEN : ".$_GET['id']."<br>";
-
-
-//$email = $_SESSION['session_email'];
-//$email_list = executePlainSQL("select email from admin");
-
-//echo "id is " . $_GET["id"] . "<br>";
 $cookie_name = "user";
 
 if(!is_null($_GET["id"])){
-	echo "IN HERE" . "<br>";
-
-	//$cookie_value = $_GET["id"];
-	setcookie("user", $_GET["id"], time() + (86400 * 30), "/"); // 86400 = 1 day
-	sleep(5);
+	setcookie($cookie_name, $_GET["id"], time() + (86400 * 30), "/"); // 86400 = 1 day
 }
-
 
     echo "Cookie name is '" . $cookie_name . "'<br>";
     echo "Value is: " . $_COOKIE[$cookie_name];
 
     $email =  $_COOKIE[$cookie_name];
-
-
-
-//$email = $_SESSION['session_email'];
-
 
 if($email){
 	while ($row = OCI_Fetch_Array($email_list, OCI_BOTH)) {
@@ -158,15 +130,11 @@ if($email){
 }
 }
 
-
-
-//var_dump($_SESSION['session_email']);
-//echo session_id();
-
 echo "<br> The email is " . $email . "<br>";  
-//echo "<br> Session is " . $_SESSION["session_email"] . "<br>";
 
-
+echo "<script>";
+echo "gapi.load('auth2',function(){gapi.auth2.init();});";
+echo "</script>";
 
 function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL command and executes it
 	//echo "<br>running ".$cmdstr."<br>";
