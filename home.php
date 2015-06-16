@@ -105,9 +105,9 @@ function simpleSearch($sphrase, $attrsToShow) {
 	}
 	$tableheader = $tableheader."</tr>";
 
-	$sqlquery = "select distinct $selectwhat 
+	$sqlquery = "select $selectwhat 
 				 from review 
-				 where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
+				 where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase $groupby";
 	$results = executePlainSQL($sqlquery);
 
 	// Print results in table
