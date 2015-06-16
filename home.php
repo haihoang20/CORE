@@ -2,7 +2,6 @@
 <!-- CORE HOME PAGE -->
 
 <?php 
-require 'execute-sql-functions.php';
 require 'home-print-functions.php';
 include 'header.php';
 ?>

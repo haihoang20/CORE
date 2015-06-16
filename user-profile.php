@@ -1,6 +1,4 @@
-
 <?php
-require 'execute-sql-functions.php';
 require 'functions.php';
 include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
@@ -24,7 +22,7 @@ $Error = "";
 
                                 // make sure company name and position's company name match.
                                 if ('---' != $_POST['postitle']) {
-                                        $comp = array ( array ( ":bind1" => $postitle));
+                                        $comp = array ( array ( ":bind1" => $_POST['postitle']));
                                         $query = executeBoundSQL("select cname from positionforcompany where title=:bind1", $comp);
                                         $row = OCI_Fetch_Array($query, OCI_BOTH);
                                         if ($row['CNAME'] != $_POST['companyname']) {
