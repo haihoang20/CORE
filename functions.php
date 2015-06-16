@@ -142,9 +142,9 @@ function printPosTitles($positions, $selected) { // if selected, we're editing
 	while ($row = OCI_Fetch_Array($positions, OCI_BOTH)) {
                 
                 if (isset($selected) && $selected == $row['TITLE']) {
-                        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
+                        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . " - " . $row['CNAME'] . "</option>";
                 }
-                else {echo "<option value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";}
+                else {echo "<option value='" . $row['TITLE'] . "'>" . $row['TITLE'] .  " - " . $row['CNAME'] . "</option>";}
 	}
         echo "</select>";
 }
