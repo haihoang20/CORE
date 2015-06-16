@@ -51,10 +51,7 @@ CREATE TABLE PositionForCompany
 ( title varchar(50) not null PRIMARY KEY,
 cname varchar(50) not null,
 duties varchar(500) not null,
-city varchar(50) not null,
-province varchar(50) not null,
-FOREIGN KEY (cname) references CoopCompany(name),
-FOREIGN KEY (city, province) references Location(city, province));
+FOREIGN KEY (cname) references CoopCompany(name));
 
 CREATE TABLE Review
 ( rid integer not null PRIMARY KEY,
@@ -223,19 +220,19 @@ insert into CoopStudent values
 
 
 insert into PositionForCompany values
-('Software Dev Co-op', 'HootSuite', 'To be cool, to develop software, to check for bugs', 'Vancouver', 'BC');
+('Software Dev Co-op', 'HootSuite', 'To be cool, to develop software, to check for bugs');
 
 insert into PositionForCompany values
-('Tech Co-op', 'TheFamousApp', 'To work on our famous app', 'Victoria', 'BC');
+('Tech Co-op', 'TheFamousApp', 'To work on our famous app');
 
 insert into PositionForCompany values
-('Java Web Dev Co-op', 'The Web Devers', 'To develop java web apps', 'Silicon Valley', 'San Francisco');
+('Java Web Dev Co-op', 'The Web Devers', 'To develop java web apps');
 
 insert into PositionForCompany values
-('Co-op Student', 'The Inputters', 'To enter data into a given system', 'Silicon Valley', 'San Francisco');
+('Co-op Student', 'The Inputters', 'To enter data into a given system');
 
 insert into PositionForCompany values
-('QA Co-op', 'HootSuite', 'To make test cases, do black box testing, etc.', 'Vancouver', 'BC');
+('QA Co-op', 'HootSuite', 'To make test cases, do black box testing, etc.');
 
 
 insert into Review values
