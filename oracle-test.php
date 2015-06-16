@@ -62,12 +62,13 @@ size="18">
 </form>
 
 <script>
+
   function signOut() {
 	var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log('User signed out.');
     });
-
+    document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
 	window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
   }
 </script>
@@ -112,10 +113,14 @@ $db_conn = OCILogon("ora_n6o8", "a15724032", "ug");
 
 $cookie_name = "user";
 
-if(!is_null($_GET["id"])){
-	setcookie($cookie_name, $_GET["id"], time() + (86400 * 30), "/"); // 86400 = 1 day
-}
-
+if(empty($_GET["id"]) && empty($_COOKIE[$cookie_name]) ){
+	header('Location: http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php');
+	exit;
+}else{
+	if(empty($_COOKIE[$cookie_name])){
+		setcookie($cookie_name, $_GET["id"], time() + (86400 * 30), "/"); // 86400 = 1 day
+	}
+		
     echo "Cookie name is '" . $cookie_name . "'<br>";
     echo "Value is: " . $_COOKIE[$cookie_name];
 
@@ -568,5 +573,8 @@ if ($db_conn) {
      OCI_RETURN_NULLS - create empty elements for the NULL fields.
      OCI_RETURN_LOBS - return the value of a LOB of the descriptor.
      Default mode is OCI_BOTH.  */
+     }
+
 ?>
+
 </html>
