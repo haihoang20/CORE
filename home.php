@@ -27,17 +27,18 @@ include 'header.php';
 
 <!-- Advanced Search of Reviews -->
   <h3> Advanced search of the reviews: </h3>
-  <form method="GET" action="home.php">
-  <p><font size="2"> Company Name contains </font><input type="text" name="companyname" size="6">
-  <br><font size="2"> Company Type/Industry </font><input type="text" name="ctype" size="6">
-  <br><font size="2"> Position Title contains </font><input type="text" name="postitle" size="6">
-  <br><font size="2"> Minimum Rating </font><input type="text" name="rating" size="6">
-  <br><font size="2"> Earliest Written Date (YYYY-MM-DD) </font><input type="text" name="datebound" size="6">
-  <br><font size="2"> Comment contains </font><input type="text" name="commentcontains" size="6">
-  <br><font size="2"> Skills desired (separate each by comma), at least one of </font><input type="text" name="skillsreq" size="6">
-  <br><font size="2"> City </font><input type="text" name="city" size="6">
-  <br><font size="2"> Province/State </font><input type="text" name="province" size="6">
-  <br><font size="2"> Country </font><input type="text" name="country" size="6">
+  <form method="GET" action="home.php" class="advanced_search">
+<p>
+<div>  <label> Company Name contains </label><input type="text" name="companyname" size="6"></div>
+<div>  <br><label> Company Type/Industry </label><input type="text" name="ctype" size="6"></div>
+<div>  <br><label> Position Title contains </label><input type="text" name="postitle" size="6"></div>
+<div>  <br><label> Minimum Rating </label><input type="text" name="rating" size="6"></div>
+<div>  <br><label> Earliest Written Date (YYYY-MM-DD) </label><input type="text" name="datebound" size="6"></div>
+<div>  <br><label> Comment contains </label><input type="text" name="commentcontains" size="6"></div>
+<div>  <br><label> Skills desired (separate each by comma), at least one of </label><input type="text" name="skillsreq" size="6"></div>
+<div>  <br><label> City </label><input type="text" name="city" size="6"></div>
+<div>  <br><label> Province/State </label><input type="text" name="province" size="6"></div>
+<div>  <br><label> Country </label><input type="text" name="country" size="6"></div>
   </p><p><input type="submit" value="Go" name="advsearch"></p>
   </form>
 </div>
@@ -91,12 +92,12 @@ include 'header.php';
     });
     document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     document.cookie = "valid=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-	window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
+	window.location.href = "http://www.ugrad.cs.ubc.ca/~" . $core_cs_id ."/landing_page.php";
   }
 
   var validCookie = getCookie("valid");
   if(validCookie == null){
-  	window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
+  	window.location.href = "http://www.ugrad.cs.ubc.ca/~" . $core_cs_id . "/landing_page.php";
   }
 
   var myCookie = getCookie("user");
@@ -164,9 +165,9 @@ function simpleSearch($sphrase, $attrsToShow) {
 	}
 	$tableheader = $tableheader."</tr>";
 
-	$sqlquery = "select $selectwhat 
+	$sqlquery = "select distinct $selectwhat 
 				 from review 
-				 where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase $groupby";
+				 where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
 	$results = executePlainSQL($sqlquery);
 
 	// Print results in table

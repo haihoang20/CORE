@@ -171,6 +171,7 @@ if ($db_conn) {
 
 echo '<div class="error">' . $Error . '</div>';
 ?>
+<div class="user_profile">
 <h2>User Profile</h2>
 
 
@@ -313,3 +314,4 @@ echo '<div class="error">' . $Error . '</div>';
   }
                 
 ?>
+</div>
