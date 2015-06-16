@@ -219,7 +219,10 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 	}
 }
 
-function skillsetSearch($skillset, $)
+
+function skillsetSearch($skillset, $) {
+
+}
 
 // Connect Oracle...
 if ($db_conn) {
