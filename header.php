@@ -9,7 +9,7 @@ require 'config.php';
 <h1>The Chubby Donuts </h1>
 
 <ul class="nav-menu">
-<li><a href="oracle-test.php">Home</a></li>
+<li><a href="home.php">Home</a></li>
 <li><a href="user-profile.php">Visit User Profile</a></li>
 </ul>
 
