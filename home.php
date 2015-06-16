@@ -66,11 +66,11 @@ include 'header.php';
 <p>
   <form method="GET" action="home.php">
     Companies with ratings:
-    <input type="submit" value="1" name="getrating1">
-    <input type="submit" value="2" name="getrating2">
-    <input type="submit" value="3" name="getrating3">
-    <input type="submit" value="4" name="getrating4">
-    <input type="submit" value="5" name="getrating5">
+    <input type="submit" value="1" name="getrating">
+    <input type="submit" value="2" name="getrating">
+    <input type="submit" value="3" name="getrating">
+    <input type="submit" value="4" name="getrating">
+    <input type="submit" value="5" name="getrating">
   </form>
 </p>
 
@@ -265,6 +265,20 @@ function skillsetSearch($skillset) {
 	echo "</table>";
 }
 
+// Gets all tuples and attributes from a given table
+function getAllFromTable($tablename) {
+	return executePlainSQL("select * from ".$tablename);
+}
+
+// Get all companies who received at least one review with rating n
+function getCompaniesWithRatingN($n) {
+	$company = executePlainSQL("select distinct name, about, type 
+    							from coopcompany cc, review r 
+    							where cc.name=r.companyname and r.rating=".$n);
+    printCompany($company);
+    OCICommit($db_conn);
+}
+
 // Connect Oracle...
 if ($db_conn) {
 
@@ -306,84 +320,42 @@ if ($db_conn) {
 		OCICommit($db_conn);
 	} else
       if (array_key_exists('getreviews', $_GET)){
-        $review = executePlainSQL("select * from review");
-        printReviews($review);
+        printReviews(getAllFromTable("review"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getcompanies', $_GET)){
-        $company = executePlainSQL("select * from coopcompany");
-        printCompany($company);
-        OCICommit($db_conn);
+      	printCompany(getAllFromTable("coopcompany"));
+      	OCICommit($db_conn);
       } else
       if (array_key_exists('getpositions', $_GET)){
-        $position = executePlainSQL("select * from positionforcompany");
-        printPosition($position);
+        printPosition(getAllFromTable("positionforcompany"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getcompanytypes', $_GET)){
-        $companytype = executePlainSQL("select * from companytype");
-        printCompanyType($companytype);
+        printCompanyType(getAllFromTable("companytype"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getdepartments', $_GET)){
-        $department = executePlainSQL("select * from department");
-        printDepartment($department);
+        printDepartment(getAllFromTable("department"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getskills', $_GET)){
-        $skills = executePlainSQL("select * from skill");
-        printSkills($skills);
+        printSkills(getAllFromTable("skill"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getpositionskills', $_GET)){
-        $posreqskills = executePlainSQL("select * from positionrequiresskill");
-        printPosReqSkills($posreqskills);
+        printPosReqSkills(getAllFromTable("positionrequiresskill"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getlocations', $_GET)){
-        $location = executePlainSQL("select * from location");
-        printLocation($location);
+        printLocation(getAllFromTable("location"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getcompanylocations', $_GET)){
-        $companylocation = executePlainSQL("select * from companylocation");
-        printCompanyLocation($companylocation);
-        OCICommit($db_conn);
+        printCompanyLocation(getAllFromTable("companylocation"));
       } else
-      if (array_key_exists('getrating1', $_GET)){
-        $company = executePlainSQL("select distinct name, about, type 
-        							from coopcompany cc, review r 
-        							where cc.name=r.companyname and r.rating=1");
-        printCompany($company);
-        OCICommit($db_conn);
-      } else
-      if (array_key_exists('getrating2', $_GET)){
-        $company = executePlainSQL("select distinct name, about, type 
-        							from coopcompany cc, review r 
-        							where cc.name=r.companyname and r.rating=2");
-        printCompany($company);
-        OCICommit($db_conn);
-      } else
-      if (array_key_exists('getrating3', $_GET)){
-        $company = executePlainSQL("select distinct name, about, type 
-        							from coopcompany cc, review r 
-        							where cc.name=r.companyname and r.rating=3");
-        printCompany($company);
-        OCICommit($db_conn);
-      } else
-      if (array_key_exists('getrating4', $_GET)){
-        $company = executePlainSQL("select distinct name, about, type 
-        							from coopcompany cc, review r 
-        							where cc.name=r.companyname and r.rating=4");
-        printCompany($company);
-        OCICommit($db_conn);
-      } else
-      if (array_key_exists('getrating5', $_GET)){
-        $company = executePlainSQL("select distinct name, about, type 
-        							from coopcompany cc, review r 
-        							where cc.name=r.companyname and r.rating=5");
-        printCompany($company);
-        OCICommit($db_conn);
+      if (array_key_exists('getrating', $_GET)){
+      	getCompaniesWithRatingN($_GET['getrating']);
       } else
       if (array_key_exists('getvancom', $_GET)){
         $company = executePlainSQL("select distinct name, about, type 
