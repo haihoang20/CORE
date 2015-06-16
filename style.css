@@ -38,3 +38,8 @@ h2 {
 .error {
         color: red;
 }
+
+.success {
+        color: green;
+        margin-bottom:10px;
+}

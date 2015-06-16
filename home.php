@@ -82,11 +82,70 @@ include 'header.php';
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 <br><br><br><br>
 
+<script>
+
+  function signOut() {
+	var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+    document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+    document.cookie = "valid=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+	window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
+  }
+
+  var validCookie = getCookie("valid");
+  if(validCookie == null){
+  	window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
+  }
+
+  var myCookie = getCookie("user");
+  if(myCookie == null){
+  	document.cookie="user=" + window.location.hash.substr(1,window.location.hash.length-1);
+  }
+
+  function getCookie(name) {
+    var dc = document.cookie;
+    var prefix = name + "=";
+    var begin = dc.indexOf("; " + prefix);
+    if (begin == -1) {
+        begin = dc.indexOf(prefix);
+        if (begin != 0) return null;
+    }
+    else
+    {
+        begin += 2;
+        var end = document.cookie.indexOf(";", begin);
+        if (end == -1) {
+        end = dc.length;
+        }
+    }
+    return unescape(dc.substring(begin + prefix.length, end));
+} 
+
+
+</script>
+
+<a href="#" onclick="signOut();">Sign out</a>
+
 
 <?php
 
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
+
+$cookie_name = 'user';
+
+
+$email =  $_COOKIE[$cookie_name];
+
+echo "<br> The email is " . $email . "<br>"; 
+echo "<br> The cookie name is " . $cookie_name . "<br>";  
+echo "<br> The cookie value is " . $_COOKIE[$cookie_name] . "<br>";  
+
+echo "<script>";
+echo "gapi.load('auth2',function(){gapi.auth2.init();});";
+echo "</script>";
 
 // Search for a given keyword or phrase contained in either the company name, position title, or review comments
 // and the selected attributes/information to show
