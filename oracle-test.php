@@ -25,10 +25,17 @@
 
 <!-- Simple Search of Reviews -->
 <div class="simple_search form">
-  <h3> Simple search of the reviews: </h3>
-  <p> Search for company name, position title, or a comment containing... </p>
+  <h3> Simple search of the reviews: <br />
+  	Search for company name, position title, or a comment containing... </h3>
   <form method="GET" action="oracle-test.php">
-  <p><input type="text" name="searchPhrase" size="6">
+  <p><input type="text" name="searchPhrase" size="6"><br />
+  	<font size="2">What information would you like to view?<br />
+  	<input type='checkbox' name='attribute[]' id='attribute' value='REVIEW_DATE'/>Date<br />
+  	<input type='checkbox' name='attribute[]' id='attribute' value='COMPANYNAME'/>Company<br />
+  	<input type='checkbox' name='attribute[]' id='attribute' value='POSTITLE'/>Position<br />
+  	<input type='checkbox' name='attribute[]' id='attribute' value='RATING'/>Rating<br />
+  	<input type='checkbox' name='attribute[]' id='attribute' value='REVIEW_COMMENT'/>Comment<br />
+  </font>
   <input type="submit" value="Go" name="simplesearch"></p>
   </form>
 <!-- </div> -->
@@ -314,10 +321,38 @@ if ($db_conn) {
 			$sphrase = $_GET['searchPhrase'];
 			$sphrase = "'%".$sphrase."%'";
 			
-			$sqlquery = "select * from review where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
-			
+			$attrsToShow = $_GET['attribute'];
+			$selectwhat = '';
+			$tableheader = '<tr>';
+			$groupby = 'group by '; // in order to get distinct tuples
+			foreach ($attrsToShow as $attr) {
+				if (!empty($selectwhat)) {
+					$selectwhat = $selectwhat.", ";
+					$groupby = $groupby.", ";
+				}
+				$selectwhat = $selectwhat.$attr;
+				$tableheader = $tableheader."<th>".$attr."</th>";
+				$groupby = $groupby.$attr;
+			}
+			$tableheader = $tableheader."</tr>";
+
+			$sqlquery = "select distinct $selectwhat from review where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
 			$results = executePlainSQL($sqlquery);
-			printReviews($results);
+
+			// display the results with the appropriate attribute columns
+			echo "<br>Reviews:<br>";
+			echo "<table>";
+			echo $tableheader;			
+			while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
+				$rows = '<tr>';
+				foreach ($attrsToShow as $attr) {
+					$rows = $rows."<td>".$row[$attr]."</td>";
+				}
+				$rows = $rows."</tr>";
+				echo $rows;
+			}
+			echo "</table>";
+
 			OCICommit($db_conn);
 	} else
 	if (array_key_exists('advsearch', $_GET)) {
