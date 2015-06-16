@@ -1,4 +1,5 @@
 <?php
+require 'execute-sql-functions.php';
 require 'functions.php';
 include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
