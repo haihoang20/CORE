@@ -1,9 +1,10 @@
 <?php
-require 'execute-sql-functions.php';
 require 'functions.php';
 include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
-$db_conn = OCILogon("ora_c9f9", "a44262095", "ug");
+$db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
+
+
 ?>
 
 <div class="edit_company form">
