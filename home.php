@@ -18,16 +18,16 @@
 <?php require 'header.php' ?>
 
 <!-- <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
-<form method="POST" action="oracle-test.php">
+<form method="POST" action="home.php">
 
 <p><input type="submit" value="Reset" name="reset"></p>
-</form>
+</form> -->
 
 <!-- Simple Search of Reviews -->
 <div class="simple_search form">
   <h3> Simple search of the reviews: <br />
   	Search for company name, position title, or a comment containing... </h3>
-  <form method="GET" action="oracle-test.php">
+  <form method="GET" action="home.php">
   <p><input type="text" name="searchPhrase" size="6"><br />
   	<font size="2">What information would you like to view?<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='REVIEW_DATE'/>Date<br />
@@ -42,7 +42,7 @@
 
 <!-- Advanced Search of Reviews -->
   <h3> Advanced search of the reviews: </h3>
-  <form method="GET" action="oracle-test.php">
+  <form method="GET" action="home.php">
   <p><font size="2"> Company Name contains </font><input type="text" name="companyname" size="6">
   <br><font size="2"> Company Type/Industry </font><input type="text" name="ctype" size="6">
   <br><font size="2"> Position Title contains </font><input type="text" name="postitle" size="6">
@@ -59,14 +59,14 @@
 
 <!-- Search for skillset -->
 <!-- A QUERY THAT REQUIRES DIVISION -->
-<form method="GET" action="oracle-test.php">
+<form method="GET" action="home.php">
 	<p><input type="submit" value="Search for jobs that require an exact skillset" name="skillsetqueryprep"/></p>
 </form>
 
 <!-- Simple Table Views -->
 <div class="query_buttons form">
   <h3>View of Tables</h3>
-  <form method="GET" action="oracle-test.php">
+  <form method="GET" action="home.php">
   <input type="submit" value="Reviews" name="getreviews">
   <input type="submit" value="Companies" name="getcompanies">
   <input type="submit" value="Positions" name="getpositions">
@@ -79,7 +79,7 @@
   </form>
 
 <p>
-  <form method="GET" action="oracle-test.php">
+  <form method="GET" action="home.php">
     Companies with ratings:
     <input type="submit" value="1" name="getrating1">
     <input type="submit" value="2" name="getrating2">
@@ -89,7 +89,7 @@
   </form>
 </p>
 
-<form method="GET" action="oracle-test.php">
+<form method="GET" action="home.php">
   <input type="submit" value="Most Popular Vancouver Companies" name="getvancom">
   <input type="submit" value="Departments With Most Jobs" name="deptjobs">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
@@ -457,7 +457,7 @@ if ($db_conn) {
 	if (array_key_exists('skillsetqueryprep', $_GET)) {
 		$skills = executePlainSQL("select name from skills");
 		echo "<br>Skills:<br>";
-		echo "<form method='GET' action='oracle-test.php'>";
+		echo "<form method='GET' action='home.php'>";
 		while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
 			echo "<input type='checkbox' name='skill[]' id='skill' value='".$row["NAME"]."'/>".$row["NAME"]."<br />";
 		}
@@ -591,7 +591,7 @@ if ($db_conn) {
 
 	if ($_POST && $success) {
 		//POST-REDIRECT-GET -- See http://en.wikipedia.org/wiki/Post/Redirect/Get
-		header("location: oracle-test.php");
+		header("location: home.php");
 	} else {
 	}
 
