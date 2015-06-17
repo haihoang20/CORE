@@ -167,7 +167,7 @@ function printLocationNames($locations, $selected) { // if selected, we're editi
         echo "</select>";
 }
 
-function printSkillNames($skills) { 
+function printSkillNames($skills, $current) { 
         echo "<select multiple name='skill[]'>";
         //if (!isset($selected)) {
         // echo "<option selected value='---'>---</option>";
@@ -180,7 +180,12 @@ function printSkillNames($skills) {
                 //if (isset($selected) && $selected == $row['TITLE']) {
                 //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
                 //}
-                echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                if (in_array($row["NAME"], $current)) {
+                echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                }
+                else {
+                        echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                }
 	}
         echo "</select>";
 }

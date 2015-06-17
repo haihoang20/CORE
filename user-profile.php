@@ -105,7 +105,7 @@ if ($db_conn) {
                                         
                                              $tuple = array (
                                                 ":bind1" => $_POST['review_comment'],
-                                                ":bind2" =>date("M d Y, g:ia "),
+                                                ":bind2" =>date("Y-m-d"),
                                                 ":bind3" => $_POST['companyname'],
                                                 ":bind4" => 101, // dummy value, coop student id
                                                 ":bind5" => $postitle,
@@ -343,6 +343,7 @@ echo '<div class="error">' . $Error . '</div>';
                         echo "<td>";
                         printSkillsForPosition($skills);
                         echo "</td>";
+                        echo "<td><a href='edit-position.php?title=" . $position['TITLE'] . "&cname=" . $position['CNAME'] ."'>Edit Position</a></td>";
                         echo "</tr>";
                 }
                 echo "</table>";
