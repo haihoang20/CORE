@@ -299,6 +299,7 @@ echo '<div class="error">' . $Error . '</div>';
                         echo "<td>";
                         printSkillsForPosition($skills);
                         echo "</td>";
+                        echo "<td><a href='edit-position.php?title=" . $position['TITLE'] . "&cname=" . $position['CNAME'] ."'>Edit Position</a></td>";
                         echo "</tr>";
                 }
                 echo "</table>";

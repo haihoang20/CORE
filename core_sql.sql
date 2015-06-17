@@ -51,7 +51,8 @@ CREATE TABLE PositionForCompany
 ( title varchar(50) not null PRIMARY KEY,
 cname varchar(50) not null,
 duties varchar(500) not null,
-FOREIGN KEY (cname) references CoopCompany(name));
+FOREIGN KEY (cname) references CoopCompany(name)
+);
 
 CREATE TABLE Review
 ( rid integer not null PRIMARY KEY,
@@ -63,16 +64,18 @@ postitle varchar(50),
 rating integer not null,
 FOREIGN KEY (companyname) references CoopCompany(name),
 FOREIGN KEY (coopstudid) references CoopStudent(id),
-FOREIGN KEY (postitle) references PositionForCompany(title),
+FOREIGN KEY (postitle) references PositionForCompany(title) ON DELETE SET NULL,
 CHECK (rating > 0 AND rating < 6)
 );
+
+
 
 CREATE TABLE PositionRequiresSkill
 ( ptitle varchar(50) not null,
 cname varchar(250) not null,
 sname varchar(250) not null,
 PRIMARY KEY (ptitle, cname, sname),
-FOREIGN KEY (ptitle) references PositionForCompany(title),
+FOREIGN KEY (ptitle) references PositionForCompany(title) ON DELETE CASCADE,
 FOREIGN KEY (cname) references CoopCompany(name),
 FOREIGN KEY (sname) references Skill(name));
 
