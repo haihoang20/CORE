@@ -57,8 +57,3 @@ h2 {
 .advanced_search div {
         clear: both;
 }
-
-.edit_position.form input {
-        display: block;
-        margin-top:5px;
-}

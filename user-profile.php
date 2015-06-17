@@ -1,11 +1,58 @@
+<script async>
+    function getCookie(name) {
+        var dc = document.cookie;
+        var prefix = name + "=";
+        var begin = dc.indexOf("; " + prefix);
+        if (begin == -1) {
+            begin = dc.indexOf(prefix);
+            if (begin != 0) return null;
+        }else{
+            begin += 2;
+            var end = document.cookie.indexOf(";", begin);
+            if (end == -1) {
+                end = dc.length;
+            }
+        }
+    
+        return unescape(dc.substring(begin + prefix.length, end));
+    }
+
+    var validCookie = getCookie("valid");
+    if(validCookie == null){
+        window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
+  } 
+
+    setTimeout(function(){
+        if(getCookie("admin") == null){
+            var cform = document.getElementById("add_company_form_id");
+            var sform = document.getElementById("add_skill_form_id");
+            var pform = document.getElementById("add_position_form_id");
+            cform.style.display = 'none';
+            sform.style.display = 'none';
+            pform.style.display = 'none';
+        }
+    }, 300);
+    
+    
+</script>
 <?php
 require 'functions.php';
 include 'header.php';
+
+echo "<script>";
+echo "gapi.load('auth2',function(){gapi.auth2.init();});";
+echo "</script>";
+
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
 
-//$_COOKIE['user'];
+$email =  $_COOKIE['user'];
 
+$isAdmin = (empty($_COOKIE['admin'])) ? false : true;
+$query_string = "select id from coopstudent where email='" . $email . "'";
+$query_user = executePlainSQL($query_string);
+$row = OCI_Fetch_Array($query_user, OCI_BOTH);
+$coop_id = $row["ID"];
 
 /****** Error Checking ******/
 $Error = "";
@@ -84,16 +131,6 @@ $Error = "";
                                 //}
 
                 }
-        else if (array_key_exists('add_comphiresfromdept', $_POST)) {
-                                if (empty($_POST['companyname'])) {
-                                        $Error = "Company name cannot be empty.";
-                                        $success = false;
-                                }
-                                else if (empty($_POST['departmentname'])) {
-                                        $Error = "Department name cannot be empty.";
-                                        $success = false;
-                                }
-                }
 
 if ($db_conn) {
                 if ($success) {
@@ -105,9 +142,9 @@ if ($db_conn) {
                                         
                                              $tuple = array (
                                                 ":bind1" => $_POST['review_comment'],
-                                                ":bind2" =>date("Y-m-d"),
+                                                ":bind2" =>date("M d Y, g:ia "),
                                                 ":bind3" => $_POST['companyname'],
-                                                ":bind4" => 101, // dummy value, coop student id
+                                                ":bind4" => $coop_id, // dummy value, coop student id
                                                 ":bind5" => $postitle,
                                                 ":bind6" => $_POST['rating']
                                              );
@@ -172,18 +209,6 @@ if ($db_conn) {
 
                                              OCICommit($db_conn);
                         }
-
-                        else if (array_key_exists('add_comphiresfromdept', $_POST)) {
-                                             $tuple = array (
-                                                ":bind1" => $_POST['companyname'],
-                                                ":bind2" => $_POST['departmentname'],
-                                             );
-                                             $alltuples = array (
-                                                $tuple
-                                             );
-                                             executeBoundSQL("insert into companyhiresfordept values (:bind1, :bind2)", $alltuples);
-                                             OCICommit($db_conn);
-                        }
         }
 
 	if ($_POST && $success) {
@@ -224,7 +249,7 @@ echo '<div class="error">' . $Error . '</div>';
         </form>
 </div>
 
-<div class="add_company_form form">
+<div id="add_company_form_id" class="add_company_form form">
         <h3>Add a Company</h3>
         <form method="POST" action="user-profile.php">
 
@@ -247,7 +272,7 @@ echo '<div class="error">' . $Error . '</div>';
         </form>
 </div>
 
-<div class="add_skill_form form">
+<div id="add_skill_form_id" class="add_skill_form form">
         <h3>Add a Skill</h3>
         <form method="POST" action="user-profile.php">
 
@@ -259,7 +284,7 @@ echo '<div class="error">' . $Error . '</div>';
         </form>
 </div>
 
-<div class="add_position_form form">
+<div id="add_position_form_id" class="add_position_form form">
         <h3>Add a Position</h3>
         <form method="POST" action="user-profile.php">
 
@@ -286,50 +311,17 @@ echo '<div class="error">' . $Error . '</div>';
         </form>
 </div>
 
-<div class="add_company_hires_for_dept form">
-        <h3>Add a Hires-From Relationship</h3>
-        <form method="POST" action="user-profile.php">
-
-        <p>Company Name</p>
-        <?php
-        if ($db_conn) {
-
-                $cnames = executePlainSQL("select name from coopcompany");
-                printCompanyNames($cnames);
-        echo "<br /> hires from <br />";
-        echo "<p>Department Name</p>";
-                $dnames = executePlainSQL("select name from department");
-                printDepartmentNames($dnames);
-        }
-        ?>
-                
-        <div></div>
-        <input type="submit" value="Submit" name="add_comphiresfromdept"></p>
-        </form>
-</div>
-
 <div class="clear-both"></div>
 
 <?php
-		$review = executePlainSQL("select * from review");
-                $company = executePlainSQL("select * from coopcompany");
-                //$department = executePlainSQL("select * from department");
-                $skills = executePlainSQL("select * from skill");
-                //$location = executePlainSQL("select * from location");
-                //$companytype = executePlainSQL("select * from companytype");
-                printReviews($review);
-                //printCompanyType($companytype);
-                printCompany($company);
-                
-                
-                //printDepartment($department);
-                printSkills($skills);
-                //printLocation($location);
-                
-                //$result = executePlainSQL("select * from tab1");
-                //printResult($result);
-                
-                 echo "<br>Positions:<br>";
+
+if($isAdmin){
+    $review = executePlainSQL("select * from review");
+    $company = executePlainSQL("select * from coopcompany");
+    $skills = executePlainSQL("select * from skill");
+    printCompany($company);
+    printSkills($skills);
+    echo "<br>Positions:<br>";
                 echo "<table>";
                 echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>required skills</th></tr>";
                 $positions = executePlainSQL("select * from positionforcompany");
@@ -343,11 +335,24 @@ echo '<div class="error">' . $Error . '</div>';
                         echo "<td>";
                         printSkillsForPosition($skills);
                         echo "</td>";
-                        echo "<td><a href='edit-position.php?title=" . $position['TITLE'] . "&cname=" . $position['CNAME'] ."'>Edit Position</a></td>";
                         echo "</tr>";
                 }
                 echo "</table>";
+}else{
+    $review = executePlainSQL("select * from review where coopstudid= " . $coop_id);
+}
 
+                //$company = executePlainSQL("select * from coopcompany");
+                //$department = executePlainSQL("select * from department");
+                //$skills = executePlainSQL("select * from skill");
+                //$location = executePlainSQL("select * from location");
+                //$companytype = executePlainSQL("select * from companytype");
+
+                printReviews($review); 
+                //printLocation($location);
+                
+                //$result = executePlainSQL("select * from tab1");
+                //printResult($result);
 	}
 
 	//Commit to save changes...

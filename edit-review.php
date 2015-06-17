@@ -4,6 +4,10 @@ include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
 
+echo "<script>";
+echo "gapi.load('auth2',function(){gapi.auth2.init();});";
+echo "</script>";
+
 $Error = "";
 $message = "";
 $ID = 0;
