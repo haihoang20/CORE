@@ -39,9 +39,6 @@
 require 'functions.php';
 include 'header.php';
 
-echo "<script>";
-echo "gapi.load('auth2',function(){gapi.auth2.init();});";
-echo "</script>";
 
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
@@ -53,6 +50,8 @@ $query_string = "select id from coopstudent where email='" . $email . "'";
 $query_user = executePlainSQL($query_string);
 $row = OCI_Fetch_Array($query_user, OCI_BOTH);
 $coop_id = $row["ID"];
+
+
 
 /****** Error Checking ******/
 $Error = "";
@@ -314,6 +313,10 @@ echo '<div class="error">' . $Error . '</div>';
 <div class="clear-both"></div>
 
 <?php
+
+echo "<script>";
+echo "gapi.load('auth2',function(){gapi.auth2.init();});";
+echo "</script>";
 
 if($isAdmin){
     $review = executePlainSQL("select * from review");
