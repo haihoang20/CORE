@@ -1,7 +1,7 @@
 
 <!-- CORE HOME PAGE -->
 
-<?php 
+<?php
 require 'home-print-functions.php';
 include 'header.php';
 ?>
@@ -43,11 +43,6 @@ include 'header.php';
   </form>
 </div>
 
-<!-- Search for skillset: query with division -->
-<form method="GET" action="home.php">
-	<p><input type="submit" value="Search for jobs that require an exact skillset" name="skillsetqueryprep"/></p>
-</form>
-
 <!-- Simple Table Views -->
 <div class="query_buttons form">
   <h3>View of Tables</h3>
@@ -79,9 +74,12 @@ include 'header.php';
   <input type="submit" value="Departments With Most Jobs" name="deptjobs">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
 </form>
+
+<!-- Search for skillset: query with division -->
+<form method="GET" action="home.php">
+	<p><input type="submit" value="Search for jobs that require an exact skillset" name="skillsetqueryprep"/></p>
+</form>
 </div>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br>
 
 <script>
 
@@ -122,7 +120,7 @@ include 'header.php';
         }
     }
     return unescape(dc.substring(begin + prefix.length, end));
-} 
+}
 
 
 </script>
@@ -140,9 +138,9 @@ $cookie_name = 'user';
 
 $email =  $_COOKIE[$cookie_name];
 
-echo "<br> The email is " . $email . "<br>"; 
-echo "<br> The cookie name is " . $cookie_name . "<br>";  
-echo "<br> The cookie value is " . $_COOKIE[$cookie_name] . "<br>";  
+echo "<br> The email is " . $email . "<br>";
+echo "<br> The cookie name is " . $cookie_name . "<br>";
+echo "<br> The cookie value is " . $_COOKIE[$cookie_name] . "<br>";
 
 echo "<script>";
 echo "gapi.load('auth2',function(){gapi.auth2.init();});";
@@ -165,15 +163,15 @@ function simpleSearch($sphrase, $attrsToShow) {
 	}
 	$tableheader = $tableheader."</tr>";
 
-	$sqlquery = "select distinct $selectwhat 
-				 from review 
+	$sqlquery = "select distinct $selectwhat
+				 from review
 				 where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
 	$results = executePlainSQL($sqlquery);
 
 	// Print results in table
 	echo "<br>Reviews:<br>";
 	echo "<table>";
-	echo $tableheader;			
+	echo $tableheader;
 	while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
 		$rows = '<tr>';
 		foreach ($attrsToShow as $attr) {
@@ -194,15 +192,15 @@ function helperAddOptionalAnd($var) {
 	return $var;
 }
 
-/* 
+/*
  * Search for reviews satisfying any subset of given criteria:
- * - word/phrase contained in the company name, company type/industry, position title, review comment, skills required 
+ * - word/phrase contained in the company name, company type/industry, position title, review comment, skills required
  * - rating >= to a given rating
  * - date >= a given date
  *- companies located in given city, province, and/or country
  */
 function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, $skills, $city, $prov, $country) {
-	$selectwhat = '*'; 
+	$selectwhat = '*';
 	$andfrom = '';
 	$reqs = '';
 	if (!empty($cname)) {
@@ -229,7 +227,7 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 		$andfrom = ", validpostitlecname vpc";
 		$reqs = helperAddOptionalAnd($reqs);
 		$reqs = $reqs."r.companyname = vpc.cname and r.postitle = vpc.postitle";
-		
+
 		$skillsArray = explode(',', $skills);
 		$sqlskills = "";
 		foreach ($skillsArray as $key=>$value) {
@@ -239,10 +237,10 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 			}
 			$sqlskills = $sqlskills."sname like $skillsArray[$key]";
 		}
-		$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname 
-														   from positionrequiresskill 
-														   where sname in (select name as sname 
-														   				   from skills 
+		$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname
+														   from positionrequiresskill
+														   where sname in (select name as sname
+														   				   from skills
 														   				   where $sqlskills))";
 		executePlainSQL($sqlmakeview);
 	}
@@ -259,7 +257,7 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 	if (!empty($country)) {
 		$andfrom = $andfrom.", companylocation cl3, location l";
 		$reqs = helperAddOptionalAnd($reqs);
-		$reqs = $reqs."r.companyname = cl3.cname and cl3.city = l.city and cl3.province = l.province and l.country = '$country'";	
+		$reqs = $reqs."r.companyname = cl3.cname and cl3.city = l.city and cl3.province = l.province and l.country = '$country'";
 	}
 	if (!empty($ctype)) {
 		$andfrom = $andfrom.", coopcompany cc";
@@ -270,8 +268,8 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 	if (!empty($reqs)) {
 		$reqs = "where ".$reqs;	// for the case where no selection input was provided
 	}
-	$sqlquery = "select $selectwhat 
-				 from review r $andfrom 
+	$sqlquery = "select $selectwhat
+				 from review r $andfrom
 				 $reqs";
 	$results = executePlainSQL($sqlquery);
 	printReviews($results);
@@ -281,7 +279,7 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 }
 
 /*
- * Search for company positions that require an exact skillset 
+ * Search for company positions that require an exact skillset
  * (Division Query)
  */
 function skillsetSearch($skillset) {
@@ -290,7 +288,7 @@ function skillsetSearch($skillset) {
 	echo "<p>You selected the following skillset: <br />";
 	foreach ($skillset as $s) {
 		echo $s."<br />";
-		if (!empty($p1)) 
+		if (!empty($p1))
 			$p1 = $p1." or";
 		$p1 = $p1." s.name = '".$s."'";
 		if (!empty($p2))
@@ -299,22 +297,22 @@ function skillsetSearch($skillset) {
 	}
 	echo "</p>";
 
-	$viewqry = "create view invalidposskill as (select pfc.cname, pfc.title, s.name as sname 
-												from positionforcompany pfc, skills s 
-												where $p1 
-												minus 
-												(select prs.cname, prs.ptitle, prs.sname 
-												 from positionrequiresskill prs 
+	$viewqry = "create view invalidposskill as (select pfc.cname, pfc.title, s.name as sname
+												from positionforcompany pfc, skills s
+												where $p1
+												minus
+												(select prs.cname, prs.ptitle, prs.sname
+												 from positionrequiresskill prs
 												 where $p2))";
 	executePlainSQL($viewqry);
-	$qry = "select cname, title 
-			from positionforcompany 
-			minus 
-			select cname, title 
+	$qry = "select cname, title
+			from positionforcompany
+			minus
+			select cname, title
 			from invalidposskill";
-	$results = executePlainSQL($qry);		
+	$results = executePlainSQL($qry);
 	executePlainSQL("drop view invalidposskill");
-	
+
 	// Display the Results
 	echo "<br>Positions:<br>";
 	echo "<table>";
@@ -331,8 +329,8 @@ function getAllFromTable($tablename) {
 
 // Get all companies who received at least one review with rating n
 function getCompaniesWithRatingN($n) {
-	$company = executePlainSQL("select distinct name, about, type 
-    							from coopcompany cc, review r 
+	$company = executePlainSQL("select distinct name, about, type
+    							from coopcompany cc, review r
     							where cc.name=r.companyname and r.rating=".$n);
     printCompany($company);
     OCICommit($db_conn);
@@ -345,7 +343,7 @@ if ($db_conn) {
 			$sphrase = $_GET['searchPhrase'];
 			$sphrase = "'%".$sphrase."%'";
 			$attrsToShow = $_GET['attribute'];
-			
+
 			simpleSearch($sphrase, $attrsToShow);
 			OCICommit($db_conn);
 	} else
@@ -371,7 +369,7 @@ if ($db_conn) {
 		while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
 			echo "<input type='checkbox' name='skill[]' id='skill' value='".$row["NAME"]."'/>".$row["NAME"]."<br />";
 		}
-		echo "<p><input type='submit' value='Submit' name='skillsetsearch'></p></form>";	
+		echo "<p><input type='submit' value='Submit' name='skillsetsearch'></p></form>";
 	} else
 	if (array_key_exists('skillsetsearch', $_GET)) {
 		$ss = $_GET['skill'];
@@ -417,22 +415,22 @@ if ($db_conn) {
       	getCompaniesWithRatingN($_GET['getrating']);
       } else
       if (array_key_exists('getvancom', $_GET)){
-        $company = executePlainSQL("select distinct name, about, type 
-        							from coopcompany cc, companylocation cl, review r 
+        $company = executePlainSQL("select distinct name, about, type
+        							from coopcompany cc, companylocation cl, review r
         							where cc.name=cl.cname and cc.name=r.companyname and cl.city='Vancouver' and r.rating>=4");
         printCompany($company);
         OCICommit($db_conn);
       } else
       if (array_key_exists('deptjobs', $_GET)){
         executePlainSql("drop view temp");
-        executePlainSql("create view Temp(cname, poscount) as (select cname, COUNT(*) as poscount 
-        													   from PositionForCompany 
+        executePlainSql("create view Temp(cname, poscount) as (select cname, COUNT(*) as poscount
+        													   from PositionForCompany
         													   GROUP BY cname)");
-        $topdept = executePlainSQL("select dname, max(posc) as num 
-        							from (select dname, sum(poscount) as posc 
-        								  from companyhiresfordept c, temp t 
-        								  where t.cname=c.cname group by dname) 
-        							where rownum<=1 
+        $topdept = executePlainSQL("select dname, max(posc) as num
+        							from (select dname, sum(poscount) as posc
+        								  from companyhiresfordept c, temp t
+        								  where t.cname=c.cname group by dname)
+        							where rownum<=1
         							group by dname");
 
         printTopDepartment($topdept);
