@@ -185,4 +185,22 @@ function printSkillNames($skills) {
         echo "</select>";
 }
 
+function printDepartmentNames($departments, $selected) { // if selected, we're editing
+        echo "<select name='departmentname'>";
+        
+        if (!isset($selected)) {
+         echo "<option selected value='---'>---</option>";
+        }
+        else {
+         echo "<option value='---'>---</option>";
+        }
+    while ($row = OCI_Fetch_Array($departments, OCI_BOTH)) {
+                if (isset($selected) && $selected == $row['NAME']) {
+                        echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                }
+                else {echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";}
+    }
+        echo "</select>";
+}
+
 ?>

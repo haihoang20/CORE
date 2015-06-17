@@ -84,6 +84,16 @@ $Error = "";
                                 //}
 
                 }
+        else if (array_key_exists('add_comphiresfromdept', $_POST)) {
+                                if (empty($_POST['companyname'])) {
+                                        $Error = "Company name cannot be empty.";
+                                        $success = false;
+                                }
+                                else if (empty($_POST['departmentname'])) {
+                                        $Error = "Department name cannot be empty.";
+                                        $success = false;
+                                }
+                }
 
 if ($db_conn) {
                 if ($success) {
@@ -160,6 +170,18 @@ if ($db_conn) {
                                                 executeBoundSQL("insert into positionrequiresskill values(:bind1, :bind2, :bind3)", $s);
                                              }
 
+                                             OCICommit($db_conn);
+                        }
+
+                        else if (array_key_exists('add_comphiresfromdept', $_POST)) {
+                                             $tuple = array (
+                                                ":bind1" => $_POST['companyname'],
+                                                ":bind2" => $_POST['departmentname'],
+                                             );
+                                             $alltuples = array (
+                                                $tuple
+                                             );
+                                             executeBoundSQL("insert into companyhiresfordept values (:bind1, :bind2)", $alltuples);
                                              OCICommit($db_conn);
                         }
         }
@@ -261,6 +283,28 @@ echo '<div class="error">' . $Error . '</div>';
 
         <div></div>
         <input type="submit" value="Add Position" name="add_position"></p>
+        </form>
+</div>
+
+<div class="add_company_hires_for_dept form">
+        <h3>Add a Hires-From Relationship</h3>
+        <form method="POST" action="user-profile.php">
+
+        <p>Company Name</p>
+        <?php
+        if ($db_conn) {
+
+                $cnames = executePlainSQL("select name from coopcompany");
+                printCompanyNames($cnames);
+        echo "<br /> hires from <br />";
+        echo "<p>Department Name</p>";
+                $dnames = executePlainSQL("select name from department");
+                printDepartmentNames($dnames);
+        }
+        ?>
+                
+        <div></div>
+        <input type="submit" value="Submit" name="add_comphiresfromdept"></p>
         </form>
 </div>
 
