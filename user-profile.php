@@ -1,5 +1,5 @@
 <?php
-require 'functions.php';
+require 'user-profile-functions.php';
 include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
@@ -73,15 +73,6 @@ $Error = "";
                                         $Error = "Company name cannot be empty.";
                                         $success = false;
                                 }
-                                //if (!empty($_POST['skill'])) {
-                                //        echo "SKILLS:";
-                                //        echo $_POST['skill'];
-                                //        foreach ($_POST['skill'] as $skill) {
-                                //                echo "skill:" . $skill; 
-                                //        }
-                                //        //print_r($_POST['skill']);
-                                //      $success = false;
-                                //}
 
                 }
         else if (array_key_exists('add_comphiresfromdept', $_POST)) {
