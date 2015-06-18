@@ -133,6 +133,15 @@ if ($db_conn) {
 
                                              executeBoundSQL("insert into coopcompany values (:bind1, :bind2, :bind3)", $alltuples); 
 
+                                              foreach ($_POST['department'] as $dept) {
+                                                $s = array ( 
+                                                        array ( 
+                                                                ":bind1" => $_POST['companyname'],
+                                                                ":bind2" => $dept 
+                                                         ));
+                                             executeBoundSQL("insert into companyhiresfordept values(:bind1, :bind2)", $s);
+                                             }
+
                                              OCICommit($db_conn);
                         } else if (array_key_exists('add_skill', $_POST)) {
 
@@ -173,17 +182,17 @@ if ($db_conn) {
                                              OCICommit($db_conn);
                         }
 
-                        else if (array_key_exists('add_comphiresfromdept', $_POST)) {
-                                             $tuple = array (
-                                                ":bind1" => $_POST['companyname'],
-                                                ":bind2" => $_POST['departmentname'],
-                                             );
-                                             $alltuples = array (
-                                                $tuple
-                                             );
-                                             executeBoundSQL("insert into companyhiresfordept values (:bind1, :bind2)", $alltuples);
-                                             OCICommit($db_conn);
-                        }
+                        //else if (array_key_exists('add_comphiresfromdept', $_POST)) {
+                        //                     $tuple = array (
+                        //                        ":bind1" => $_POST['companyname'],
+                        //                        ":bind2" => $_POST['departmentname'],
+                        //                     );
+                        //                     $alltuples = array (
+                        //                        $tuple
+                        //                     );
+                        //                     executeBoundSQL("insert into companyhiresfordept values (:bind1, :bind2)", $alltuples);
+                        //                     OCICommit($db_conn);
+                        //}
         }
 
 	if ($_POST && $success) {
@@ -238,11 +247,18 @@ echo '<div class="error">' . $Error . '</div>';
                 echo "<p>";
                 printTypeNames($types);
                 echo "</p>";
+
+        
+                echo "<p>Company Hires From</p>";
+                $departments = executePlainSQL("select name from department");
+                printDepartmentNamesMulti($departments);
         }
         ?>
 
         <p>About Company</p>
         <p><textarea name="companyabout"></textarea></p>
+                
+
         <input type="submit" value="Add Company" name="add_company"></p>
         </form>
 </div>
@@ -286,27 +302,6 @@ echo '<div class="error">' . $Error . '</div>';
         </form>
 </div>
 
-<div class="add_company_hires_for_dept form">
-        <h3>Add a Hires-From Relationship</h3>
-        <form method="POST" action="user-profile.php">
-
-        <p>Company Name</p>
-        <?php
-        if ($db_conn) {
-
-                $cnames = executePlainSQL("select name from coopcompany");
-                printCompanyNames($cnames);
-        echo "<br /> hires from <br />";
-        echo "<p>Department Name</p>";
-                $dnames = executePlainSQL("select name from department");
-                printDepartmentNames($dnames);
-        }
-        ?>
-                
-        <div></div>
-        <input type="submit" value="Submit" name="add_comphiresfromdept"></p>
-        </form>
-</div>
 
 <div class="clear-both"></div>
 
