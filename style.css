@@ -1,6 +1,10 @@
 h1 {
-        color: red;
+        color: black;
         text-align: center;
+        padding-top:60px;
+        width: 797px;
+        margin: 0 auto;
+        font-size: 91px;
 }
 h2 {
 }
@@ -95,5 +99,12 @@ h2 {
 
 div.results {
         min-width: 500px;
+        max-width: 741px;
         float: left;
+}
+
+body {
+        background-image: url("donut.jpeg");
+        background-repeat: no-repeat;
+        background-position:108% -56px;
 }

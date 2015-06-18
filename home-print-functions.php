@@ -21,7 +21,7 @@ function printReviews($review) { //prints results from a select statement
 
 // Print Company tuples with all attributes
 function printCompany($companies) { //prints results from a select statement
-	echo "<h3>Companies:</h3>";
+	echo "<div class='results'><h3>Companies:</h3>";
 	echo "<table>";
 	echo "<tr><th>Name</th><th>About</th><th>Type</th><th>Hires From Department</th></tr>";
 
@@ -37,7 +37,7 @@ function printCompany($companies) { //prints results from a select statement
 					echo "</td>";
 					echo "</tr>";
 	}
-	echo "</table>";
+	echo "</table></div>";
 
 }
 
@@ -52,7 +52,7 @@ function printHiresFromForCompany($HiresFrom) {
 
 // Print Position tuples with all attributes
 function printPosition($positions) { //prints results from a select statement
-	echo "<h3>Positions:</h3>";
+	echo "<div class='results'><h3>Positions:</h3>";
 	echo "<table>";
 	echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>Required Skills</th></tr>";
 	while ($position = OCI_Fetch_Array($positions, OCI_BOTH)) {
@@ -67,7 +67,7 @@ function printPosition($positions) { //prints results from a select statement
 					echo "</td>";
 					echo "</tr>";
 	}
-	echo "</table>";
+	echo "</table></div>";
 }
 
 function printPositionWithoutSkills($position) {
