@@ -23,7 +23,7 @@ function printCompanyWithoutHiresFrom($company) {
 }
 function printHiresFromForCompany($HiresFrom) {
 	while ($dept = OCI_Fetch_Array($HiresFrom, OCI_BOTH)) {
-		echo $dept["NAME"] . "  ";
+		echo $dept["NAME"] . " |  ";
         }
 }
 
