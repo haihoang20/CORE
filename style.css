@@ -40,9 +40,23 @@ h2 {
         text-align: center;
         
 }
+.nav-menu a {
+        text-decoration: none;
+        border: 1px solid black;
+        padding: 5px;
+        background:beige;
+        width: 155px;
+        display: block;
+        color:black;
+        font-weight:bold;
+}
+.nav-menu a:hover {
+        color:white;
+}
 
 .nav-menu li {
-        margin-right:10px;
+        margin: 0 auto 15px;
+        width:200px;
 }
 
 .error {
