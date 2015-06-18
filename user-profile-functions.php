@@ -2,22 +2,10 @@
 
 <?php
 
-/*** functions to display table info ***/
-
-function printCompanyType($companytype) { 
-	echo "<br>Company Type:<br>";
-	echo "<table>";
-	echo "<tr><th>Type</th><th>Description</th></tr>";
-
-	while ($row = OCI_Fetch_Array($companytype, OCI_BOTH)) {
-		echo "<tr><td>" . $row["TYPE"] . "</td><td>" . $row["DESCRIPTION"] . "</td></tr>"; //or just use "echo $row[0]"
-	}
-	echo "</table>";
-
-}
+/*** functions for display table info ***/
 
 function printReviews($review) { 
-	echo "<br>Reviews:<br>";
+	echo "<h3>Reviews:</h3>";
 	echo "<table>";
 	echo "<tr><th>RID</th><th>Date</th><th>Company</th><th>Position</th><th>Rating</th><th>Comment</th></tr>";
 
@@ -30,19 +18,6 @@ function printReviews($review) {
 
 }
 
-function printCompany($company) { 
-	echo "<br>Companies:<br>";
-	echo "<table>";
-	echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
-
-	while ($row = OCI_Fetch_Array($company, OCI_BOTH)) {
-		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["ABOUT"] . "</td><td>" . $row["TYPE"] . "</td> <td><a href='edit-company.php?name=" . $row["NAME"] . "'>Edit Company</a></td> </tr>";
-	}
-	echo "</table>";
-
-}
-
-
 function printCompanyWithoutHiresFrom($company) {
         echo "<td>" . $company["NAME"] . "</td><td>" . $company["ABOUT"] . "</td><td>" . $company["TYPE"] . "</td>";
 }
@@ -53,7 +28,7 @@ function printHiresFromForCompany($HiresFrom) {
 }
 
 function printPositionWithoutSkills($position) { 
-		echo "<td>" . $position["TITLE"] . "</td><td>" . $position["CNAME"] . "</td><td>" . $position["DUTIES"] . "</td><td>";
+		echo "<td>" . $position["TITLE"] . "</td><td>" . $position["CNAME"] . "</td><td>" . $position["DUTIES"] . "</td>";
 }
 
 function printSkillsForPosition($skills) {
@@ -64,38 +39,13 @@ function printSkillsForPosition($skills) {
         
 }
 
-
-function printDepartment($department) { //prints results from a select statement
-	echo "<br>Departments:<br>";
-	echo "<table>";
-	echo "<tr><th>Name</th></tr>";
-
-	while ($row = OCI_Fetch_Array($department, OCI_BOTH)) {
-		echo "<tr><td>" . $row["NAME"] . "</td></tr>"; //or just use "echo $row[0]"
-	}
-	echo "</table>";
-
-}
-
 function printSkills($skills) { //prints results from a select statement
-	echo "<br>Skills:<br>";
+	echo "<h3>Skills:</h3>";
 	echo "<table>";
 	echo "<tr><th>Name</th><th>Description</th></tr>";
 
 	while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
 		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["DESCRIPTION"] . "</td></tr>"; //or just use "echo $row[0]"
-	}
-	echo "</table>";
-
-}
-
-function printLocation($location) { //prints results from a select statement
-	echo "<br>Locations:<br>";
-	echo "<table>";
-	echo "<tr><th>City</th><th>Province</th><th>Country</th></tr>";
-
-	while ($row = OCI_Fetch_Array($location, OCI_BOTH)) {
-		echo "<tr><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td><td>" . $row["COUNTRY"] . "</td></tr>"; //or just use "echo $row[0]"
 	}
 	echo "</table>";
 
@@ -168,9 +118,6 @@ function printLocationNames($locations, $selected) { // if selected, we're editi
         }
 	while ($row = OCI_Fetch_Array($locations, OCI_BOTH)) {
                 
-                //if (isset($selected) && $selected == $row['TITLE']) {
-                //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
-                //}
                 echo "<option value='" . $row['CITY'] . "-" . $row['PROVINCE'] . "'>" . $row['CITY'] . " - " . $row['PROVINCE'] . "</option>";
 	}
         echo "</select>";
@@ -202,25 +149,6 @@ function printDepartmentNamesMulti($departments, $current) {
                         echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
                 }
 	}
-        echo "</select>";
-}
-
-
-function printDepartmentNames($departments, $selected) { // if selected, we're editing
-        echo "<select name='departmentname'>";
-        
-        if (!isset($selected)) {
-         echo "<option selected value='---'>---</option>";
-        }
-        else {
-         echo "<option value='---'>---</option>";
-        }
-    while ($row = OCI_Fetch_Array($departments, OCI_BOTH)) {
-                if (isset($selected) && $selected == $row['NAME']) {
-                        echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
-                }
-                else {echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";}
-    }
         echo "</select>";
 }
 
