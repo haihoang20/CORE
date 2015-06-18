@@ -10,10 +10,10 @@ include 'header.php';
 
 <!-- Simple Search of Reviews -->
 <div class="simple_search form">
-  <h3> Simple search of the reviews: <br />
-  	Search for company name, position title, or a comment containing... </h3>
+  <h3> Simple search of the reviews: <br /></h3>
+  <p>Search for company name, position title, or a comment containing... </p>
   <form method="GET" action="home.php">
-  <p><input type="text" name="searchPhrase" size="6"><br />
+  <p><input type="text" name="searchPhrase" size="6"><br /><br />
   	<font size="2">What information would you like to view?<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='RID'/>RID<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='REVIEW_DATE'/>Date<br />
@@ -150,6 +150,7 @@ echo "</script>";
 // Search for a given keyword or phrase contained in either the company name, position title, or review comments
 // and the selected attributes/information to show
 function simpleSearch($sphrase, $attrsToShow) {
+	$sphrase = "'%".$sphrase."%'";
 	$selectwhat = '';
 	$tableheader = '<tr>';
 	$groupby = 'group by '; // in order to get distinct tuples
@@ -168,20 +169,23 @@ function simpleSearch($sphrase, $attrsToShow) {
 		$selectwhat = "*";
 		$groupby = "";
 	}
-
 	$sqlquery = "select $selectwhat
 				 from review
 				 where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase $groupby";
 	$results = executePlainSQL($sqlquery);
 
 	// Print results in table
-	if ($selectwhat == "*") {
+	$row = OCI_Fetch_Array($results, OCI_BOTH);
+	if (empty($row)) {
+		echo "<br>Reviews:<br>";
+		echo "No matching reviews for '".substr($sphrase,2,strlen($sphrase)-4)."'.";
+	} else if ($selectwhat == "*") {
 		printReviews($results);
 	} else {
 		echo "<br>Reviews:<br>";
 		echo "<table>";
 		echo $tableheader;
-		while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
+		while ($row) {
 			$rows = '<tr>';
 			foreach ($attrsToShow as $attr) {
 				$rows = $rows."<td>".$row[$attr]."</td>";
@@ -282,10 +286,31 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 				 from review r $andfrom
 				 $reqs";
 	$results = executePlainSQL($sqlquery);
-	printReviews($results);
+
+	$resultrows = OCI_Fetch_Array($results, OCI_BOTH);
+	if (empty($resultrows)) {
+		echo "<br>Reviews:<br>";
+		echo "No matching reviews found.";
+	} else {
+		printReviews($results);
+	}
 	if (!empty($skills)) {
 		executePlainSQL("drop view validpostitlecname");
 	}
+}
+
+// Helper method for advanced search to check type of date inputted by user
+// Checks if the date conforms to a 'YYYY-MM-DD' format
+function isValidDateBound($dateb) {
+	$datebarray = explode('-', $dateb); // var used for type checking of dateb
+	if (count($datebarray) != 3) return false;
+	foreach ($datebarray as $d) {
+		if (!is_numeric($d)) return false;
+	}
+	if (strlen($datebarray[0]) != 4) return false;
+	if (strlen($datebarray[1]) != 2 || $datebarray[1] < 1 || $datebarray[1] > 12) return false;
+	if (strlen($datebarray[2]) != 2 || $datebarray[2] < 1 || $datebarray[2] > 31) return false;
+	return true;
 }
 
 /*
@@ -351,7 +376,6 @@ if ($db_conn) {
 
 	if (array_key_exists('simplesearch', $_GET)) {
 			$sphrase = $_GET['searchPhrase'];
-			$sphrase = "'%".$sphrase."%'";
 			$attrsToShow = $_GET['attribute'];
 
 			simpleSearch($sphrase, $attrsToShow);
@@ -369,7 +393,13 @@ if ($db_conn) {
 		$prov = $_GET['province'];
 		$country = $_GET['country'];
 
-		advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, $skills, $city, $prov, $country);
+		if (!empty($dateb) && !isValidDateBound($dateb)) {
+			echo "<br>Advanced Search: Please enter a valid date as YYYY-MM-DD. <br>";
+		} else if (!empty($rating) && (!is_numeric($rating) || $rating < 1 || $rating > 5)) {
+			echo "<br>Advanced Search: Please enter a number between 1 and 5 for the rating field.<br>";
+		} else {
+			advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, $skills, $city, $prov, $country);
+		}
 		OCICommit($db_conn);
 	} else
 	if (array_key_exists('skillsetqueryprep', $_GET)) {
