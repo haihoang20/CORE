@@ -252,7 +252,7 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 		$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname
 														   from positionrequiresskill
 														   where sname in (select name as sname
-														   				   from skills
+														   				   from skill
 														   				   where $sqlskills))";
 		executePlainSQL($sqlmakeview);
 	}
@@ -325,7 +325,7 @@ function skillsetSearch($skillset) {
 	echo "</p>";
 
 	$viewqry = "create view invalidposskill as (select pfc.cname, pfc.title, s.name as sname
-												from positionforcompany pfc, skills s
+												from positionforcompany pfc, skill s
 												where $p1
 												minus
 												(select prs.cname, prs.ptitle, prs.sname
@@ -398,7 +398,7 @@ if ($db_conn) {
 		OCICommit($db_conn);
 	} else
 	if (array_key_exists('skillsetqueryprep', $_GET)) {
-		$skills = executePlainSQL("select name from skills");
+		$skills = executePlainSQL("select name from skill");
                 echo "<div class='results'>";
 		echo "<br>Skills:<br>";
 		echo "<form method='GET' action='home.php'>";
