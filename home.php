@@ -74,7 +74,7 @@ include 'header.php';
 
 <form method="GET" action="home.php">
   <input type="submit" value="Most Popular Vancouver Companies" name="getvancom">
-  <input type="submit" value="Departments With Most Jobs" name="deptjobs">
+  <input type="submit" value="Department With Most Jobs" name="deptjobs">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
 </form>
 
@@ -427,24 +427,7 @@ if ($db_conn) {
       	OCICommit($db_conn);
       } else
       if (array_key_exists('getpositions', $_GET)){
-        // printPosition(getAllFromTable("positionforcompany"));
-        echo "<h3>Positions:</h3>";
-        echo "<table>";
-        echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>Required Skills</th></tr>";
-        $positions = executePlainSQL("select * from positionforcompany");
-        while ($position = OCI_Fetch_Array($positions, OCI_BOTH)) {
-                echo "<tr>";
-                printPositionWithoutSkills($position);
-                $s = array ( array (
-                        ":bind1" => $position["TITLE"],
-                        ":bind2" => $position["CNAME"]));
-                $skills = executeBoundSQL("select sname from positionrequiresskill where ptitle=:bind1 and cname=:bind2", $s);
-                echo "<td>";
-                printSkillsForPosition($skills);
-                echo "</td>";
-                echo "</tr>";
-        }
-        echo "</table>";
+        printPosition(getAllFromTable("positionforcompany"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getcompanytypes', $_GET)){

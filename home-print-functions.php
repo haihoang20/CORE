@@ -20,29 +20,64 @@ function printReviews($review) { //prints results from a select statement
 }
 
 // Print Company tuples with all attributes
-function printCompany($company) { //prints results from a select statement
+function printCompany($companies) { //prints results from a select statement
+	// echo "<h3>Companies:</h3>";
+	// echo "<table>";
+	// echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
+	//
+	// while ($row = OCI_Fetch_Array($company, OCI_BOTH)) {
+	// 	echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["ABOUT"] . "</td><td>" . $row["TYPE"] . "</td></tr>"; //or just use "echo $row[0]"
+	// }
+	// echo "</table>";
 	echo "<h3>Companies:</h3>";
 	echo "<table>";
-	echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
+	echo "<tr><th>Name</th><th>About</th><th>Type</th><th>Hires From Department</th></tr>";
 
-	while ($row = OCI_Fetch_Array($company, OCI_BOTH)) {
-		echo "<tr><td>" . $row["NAME"] . "</td><td>" . $row["ABOUT"] . "</td><td>" . $row["TYPE"] . "</td></tr>"; //or just use "echo $row[0]"
+	//$companies = executePlainSQL("select * from coopcompany");
+
+	while ($company = OCI_Fetch_Array($companies, OCI_BOTH)) {
+					echo "<tr>";
+					printCompanyWithoutHiresFrom($company);
+					$s = array ( array (
+									":bind1" => $company["NAME"]
+									));
+					$HiresFrom = executeBoundSQL("select d.name from department d, companyhiresfordept ch where d.name = ch.dname and ch.cname=:bind1", $s);
+					echo "<td>";
+					printHiresFromForCompany($HiresFrom);
+					echo "</td>";
+					echo "</tr>";
 	}
 	echo "</table>";
 
 }
 
+function printCompanyWithoutHiresFrom($company) {
+        echo "<td>" . $company["NAME"] . "</td><td>" . $company["ABOUT"] . "</td><td>" . $company["TYPE"] . "</td>";
+}
+function printHiresFromForCompany($HiresFrom) {
+	while ($dept = OCI_Fetch_Array($HiresFrom, OCI_BOTH)) {
+		echo $dept["NAME"] . "  ";
+        }
+}
+
 // Print Position tuples with all attributes
-function printPosition($position) { //prints results from a select statement
+function printPosition($positions) { //prints results from a select statement
 	echo "<h3>Positions:</h3>";
 	echo "<table>";
-	echo "<tr><th>Title</th><th>Company</th><th>Duties</th></tr>";
-
-	while ($row = OCI_Fetch_Array($position, OCI_BOTH)) {
-		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["DUTIES"] . "</td></tr>"; //or just use "echo $row[0]"
+	echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>Required Skills</th></tr>";
+	while ($position = OCI_Fetch_Array($positions, OCI_BOTH)) {
+					echo "<tr>";
+					printPositionWithoutSkills($position);
+					$s = array ( array (
+									":bind1" => $position["TITLE"],
+									":bind2" => $position["CNAME"]));
+					$skills = executeBoundSQL("select sname from positionrequiresskill where ptitle=:bind1 and cname=:bind2", $s);
+					echo "<td>";
+					printSkillsForPosition($skills);
+					echo "</td>";
+					echo "</tr>";
 	}
 	echo "</table>";
-
 }
 
 function printPositionWithoutSkills($position) {
