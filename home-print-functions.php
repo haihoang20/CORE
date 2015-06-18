@@ -6,7 +6,7 @@
 
 // Print Review tuples with all attributes
 function printReviews($review) { //prints results from a select statement
-	echo "<br>Reviews:<br>";
+	echo "<h3>Reviews:</h3>";
 	echo "<table>";
 	echo "<tr><th>RID</th><th>Date</th><th>Company</th><th>Position</th><th>Rating</th><th>Comment</th></tr>";
 
@@ -21,7 +21,7 @@ function printReviews($review) { //prints results from a select statement
 
 // Print Company tuples with all attributes
 function printCompany($company) { //prints results from a select statement
-	echo "<br>Companies:<br>";
+	echo "<h3>Companies:</h3>";
 	echo "<table>";
 	echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
 
@@ -34,7 +34,7 @@ function printCompany($company) { //prints results from a select statement
 
 // Print Position tuples with all attributes
 function printPosition($position) { //prints results from a select statement
-	echo "<br>Positions:<br>";
+	echo "<h3>Positions:</h3>";
 	echo "<table>";
 	echo "<tr><th>Title</th><th>Company</th><th>Duties</th></tr>";
 
@@ -59,7 +59,7 @@ function printSkillsForPosition($skills) {
 
 // Print CompanyType tuples with all attributes
 function printCompanyType($companytype) { //prints results from a select statement
-	echo "<br>Company Type:<br>";
+	echo "<h3>Company Type:</h3>";
 	echo "<table>";
 	echo "<tr><th>Type</th><th>Description</th></tr>";
 
@@ -72,7 +72,7 @@ function printCompanyType($companytype) { //prints results from a select stateme
 
 // Print Department tuples with all attributes
 function printDepartment($department) { //prints results from a select statement
-	echo "<br>Departments:<br>";
+	echo "<h3>Departments:</h3>";
 	echo "<table>";
 	echo "<tr><th>Name</th></tr>";
 
@@ -85,7 +85,7 @@ function printDepartment($department) { //prints results from a select statement
 
 // Print Skills tuples with all attributes
 function printSkills($skills) { //prints results from a select statement
-	echo "<br>Skills:<br>";
+	echo "<h3>Skills:</h3>";
 	echo "<table>";
 	echo "<tr><th>Name</th><th>Description</th></tr>";
 
@@ -96,22 +96,9 @@ function printSkills($skills) { //prints results from a select statement
 
 }
 
-// Print PositionRequiresSkill tuples with all attributes
-function printPosReqSkills($posreqskills) { //prints results from a select statement
-	echo "<br>Skills By Position:<br>";
-	echo "<table>";
-	echo "<tr><th>Position</th><th>Company</th><th>Skill</th></tr>";
-
-	while ($row = OCI_Fetch_Array($posreqskills, OCI_BOTH)) {
-		echo "<tr><td>" . $row["PTITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["SNAME"] . "</td></tr>"; //or just use "echo $row[0]"
-	}
-	echo "</table>";
-
-}
-
 // Print Location tuples with all attributes
 function printLocation($location) { //prints results from a select statement
-	echo "<br>Locations:<br>";
+	echo "<h3>Locations:</h3>";
 	echo "<table>";
 	echo "<tr><th>City</th><th>Province</th><th>Country</th></tr>";
 
@@ -124,7 +111,7 @@ function printLocation($location) { //prints results from a select statement
 
 // Print CompanyLocation tuples with all attributes
 function printCompanyLocation($companylocation) { //prints results from a select statement
-	echo "<br>Company Locations:<br>";
+	echo "<h3>Company Locations:</h3>";
 	echo "<table>";
 	echo "<tr><th>Company</th><th>City</th><th>Province</th></tr>";
 
@@ -141,7 +128,7 @@ function printCompanyLocation($companylocation) { //prints results from a select
 // Print the Top Skills desired for all jobs in the database,
 // with the name of the skill and the count of jobs listed as requiring it
 function printTopSkills($topskills) { //prints results from a select statement
-	echo "<br>Most Desired Skills:<br>";
+	echo "<h3>Most Desired Skills:</h3>";
 	echo "<table>";
 	echo "<tr><th>Skill</th><th>Number of positions that require this skill</th></tr>";
 
@@ -154,7 +141,7 @@ function printTopSkills($topskills) { //prints results from a select statement
 
 // Print the Top Departments hired from, with Department Name and the Number of Jobs
 function printTopDepartment($topdept) { //prints results from a select statement
-	echo "<br>Departments with most jobs:<br>";
+	echo "<h3>Departments with most jobs:</h3>";
 	echo "<table>";
 	echo "<tr><th>Department</th><th>Number of Positions</th></tr>";
 

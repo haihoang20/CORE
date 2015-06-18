@@ -57,7 +57,6 @@ include 'header.php';
   <input type="submit" value="Company Types" name="getcompanytypes">
   <input type="submit" value="Departments" name="getdepartments">
   <input type="submit" value="Skills" name="getskills">
-  <input type="submit" value="Skills By Position" name ="getpositionskills">
   <input type="submit" value="Locations" name="getlocations">
   <input type="submit" value="Company Locations" name="getcompanylocations">
   </form>
@@ -458,10 +457,6 @@ if ($db_conn) {
       } else
       if (array_key_exists('getskills', $_GET)){
         printSkills(getAllFromTable("skill"));
-        OCICommit($db_conn);
-      } else
-      if (array_key_exists('getpositionskills', $_GET)){
-        printPosReqSkills(getAllFromTable("positionrequiresskill"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getlocations', $_GET)){
