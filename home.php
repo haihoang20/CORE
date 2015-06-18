@@ -341,7 +341,7 @@ function skillsetSearch($skillset) {
 	executePlainSQL("drop view invalidposskill");
 
 	// Display the Results
-    echo "<div class='results'";	
+    echo "<div class='results'";
     printPosition($results);
 	echo "</div>";
 }
@@ -455,17 +455,19 @@ if ($db_conn) {
       if (array_key_exists('deptjobs', $_GET)){
         executePlainSql("drop view temp");
         executePlainSql("create view Temp(cname, poscount) as (select cname, COUNT(*) as poscount
-        													   from PositionForCompany
-        													   GROUP BY cname)");
+        													                             from PositionForCompany
+        													                             GROUP BY cname)");
         executePlainSql("drop view temp2");
         executePlainSql("create view Temp2(dname, num) as (select dname, max(posc) as num
-                                    from (select dname, sum(poscount) as posc
-                                          from companyhiresfordept c, temp t
-                                          where t.cname=c.cname group by dname)
-                                    group by dname)");
+                                                            from (select dname, sum(poscount) as posc
+                                                                  from companyhiresfordept c, temp t
+                                                                  where t.cname=c.cname
+                                                                  group by dname)
+                                                            group by dname)");
          $topdept = executePlainSQL("select dname, num
                                      from Temp2
-                                     where num>=all(select num from Temp2)");
+                                     where num>=all(select num
+                                                    from Temp2)");
 
         printTopDepartment($topdept);
         OCICommit($db_conn);
