@@ -30,7 +30,7 @@ function printReviews($review) {
 
 }
 
-function printCompany($company) { //prints results from a select statement
+function printCompany($company) { 
 	echo "<br>Companies:<br>";
 	echo "<table>";
 	echo "<tr><th>Name</th><th>About</th><th>Type</th></tr>";
@@ -42,9 +42,18 @@ function printCompany($company) { //prints results from a select statement
 
 }
 
+
+function printCompanyWithoutHiresFrom($company) {
+        echo "<td>" . $company["NAME"] . "</td><td>" . $company["ABOUT"] . "</td><td>" . $company["TYPE"] . "</td>";
+}
+function printHiresFromForCompany($HiresFrom) {
+	while ($dept = OCI_Fetch_Array($HiresFrom, OCI_BOTH)) {
+		echo $dept["NAME"] . "  ";
+        }
+}
+
 function printPositionWithoutSkills($position) { 
 		echo "<td>" . $position["TITLE"] . "</td><td>" . $position["CNAME"] . "</td><td>" . $position["DUTIES"] . "</td><td>";
-                printSkillsForPosition($position['TITLE'], $position['CNAME']);
 }
 
 function printSkillsForPosition($skills) {
@@ -169,17 +178,8 @@ function printLocationNames($locations, $selected) { // if selected, we're editi
 
 function printSkillNames($skills, $current) { 
         echo "<select multiple name='skill[]'>";
-        //if (!isset($selected)) {
-        // echo "<option selected value='---'>---</option>";
-        //}
-        //else {
-        // echo "<option value='---'>---</option>";
-        //}
 	while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
                 
-                //if (isset($selected) && $selected == $row['TITLE']) {
-                //        echo "<option selected value='" . $row['TITLE'] . "'>" . $row['TITLE'] . "</option>";
-                //}
                 if (in_array($row["NAME"], $current)) {
                 echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
                 }
@@ -189,6 +189,22 @@ function printSkillNames($skills, $current) {
 	}
         echo "</select>";
 }
+
+/* function for printing select box when editing company to select what departments they hire for */
+function printDepartmentNamesMulti($departments, $current) {
+        echo "<select multiple name='department[]'>";
+	while ($row = OCI_Fetch_Array($departments, OCI_BOTH)) {
+                
+                if (in_array($row["NAME"], $current)) {
+                echo "<option selected value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                }
+                else {
+                        echo "<option value='" . $row['NAME'] . "'>" . $row['NAME'] . "</option>";
+                }
+	}
+        echo "</select>";
+}
+
 
 function printDepartmentNames($departments, $selected) { // if selected, we're editing
         echo "<select name='departmentname'>";

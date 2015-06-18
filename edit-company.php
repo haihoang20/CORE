@@ -38,6 +38,17 @@ if ($db_conn) {
                                         $tuple
                                 );
                                 executeBoundSQL("update coopcompany set about=:bind1, type=:bind2 where name=:bind3", $alltuples);
+                                        
+                                executeBoundSQL("delete from companyhiresfordept where cname=:bind3", $alltuples);
+                                foreach ($_POST['department'] as $dept) {
+                                   $s = array (
+                                           array (
+                                                   ":bind1" => $_POST['old_name'],
+                                                   ":bind2" => $dept
+                                           ));
+                                           executeBoundSQL("insert into companyhiresfordept values(:bind1, :bind2)", $s);
+                                }                
+        
                                 OCICommit($db_conn);
                         
 
@@ -82,6 +93,16 @@ echo '<div class="success">' .$message . '</div>';
                 echo "<p>Company Type</p>";
                 $types = executePlainSQL("select type from companytype");
                 printTypeNames($types, $row["TYPE"]);
+
+                echo "<p>Departments that company hires from</p>";
+                $alldepts = executePlainSQL("select name from department");
+
+                $deptsArray = array();
+                $currentdepts = executeBoundSQL("select name from department d, companyhiresfordept ch where d.name = ch.dname and ch.cname=:bind1", $alltuples);
+                while ($sr= OCI_Fetch_Array($currentdepts, OCI_BOTH)) {
+                        array_push($deptsArray, $sr['NAME']);
+                }
+                printDepartmentNamesMulti($alldepts, $deptsArray); 
 
                 echo "<p>About Company</p> ";
                 echo "<p><textarea name='about_company'>" . $row["ABOUT"] . "</textarea></p>"; 

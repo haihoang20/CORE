@@ -18,6 +18,13 @@ h2 {
 
 .user_profile .form {
         height: 500px;
+        width: 230px;
+}
+
+.user_profile .form select, 
+.user_profile .form textarea,
+.user_profile .form input[type=text] {
+        width: 200px;
 }
 
 .clear-both {
@@ -62,3 +69,5 @@ h2 {
         display: block;
         margin-top:5px;
 }
+
+

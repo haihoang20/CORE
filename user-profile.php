@@ -312,24 +312,43 @@ echo '<div class="error">' . $Error . '</div>';
 
 <?php
 		$review = executePlainSQL("select * from review");
-                $company = executePlainSQL("select * from coopcompany");
                 //$department = executePlainSQL("select * from department");
                 $skills = executePlainSQL("select * from skill");
                 //$location = executePlainSQL("select * from location");
                 //$companytype = executePlainSQL("select * from companytype");
                 printReviews($review);
                 //printCompanyType($companytype);
-                printCompany($company);
                 
                 
                 //printDepartment($department);
                 printSkills($skills);
                 //printLocation($location);
                 
-                //$result = executePlainSQL("select * from tab1");
-                //printResult($result);
-                
-                 echo "<br>Positions:<br>";
+                /****** Print Company Stuff **********/
+
+                echo "<br>Companies:<br>";
+                echo "<table>";
+                echo "<tr><th>Name</th><th>About</th><th>Type</th><th>Hires From</th></tr>";
+
+                $companies = executePlainSQL("select * from coopcompany");
+
+                while ($company = OCI_Fetch_Array($companies, OCI_BOTH)) {
+                        echo "<tr>";
+                        printCompanyWithoutHiresFrom($company);
+                        $s = array ( array ( 
+                                ":bind1" => $company["NAME"]
+                                ));
+                        $HiresFrom = executeBoundSQL("select d.name from department d, companyhiresfordept ch where d.name = ch.dname and ch.cname=:bind1", $s);
+                        echo "<td>";
+                        printHiresFromForCompany($HiresFrom);
+                        echo "</td>";
+                        echo "<td><a href='edit-company.php?name=" . $company["NAME"] . "'>Edit Company</a></td>";
+                        echo "</tr>";
+                }
+                echo "</table>";
+
+                /****** Print Positions Stuff ********/
+                echo "<br>Positions:<br>";
                 echo "<table>";
                 echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>required skills</th></tr>";
                 $positions = executePlainSQL("select * from positionforcompany");
