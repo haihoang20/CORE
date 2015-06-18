@@ -1,4 +1,5 @@
 <script async>
+
     function getCookie(name) {
         var dc = document.cookie;
         var prefix = name + "=";
@@ -50,6 +51,23 @@ $query_string = "select id from coopstudent where email='" . $email . "'";
 $query_user = executePlainSQL($query_string);
 $row = OCI_Fetch_Array($query_user, OCI_BOTH);
 $coop_id = $row["ID"];
+
+
+function isRegistered($email){
+    $email_list = executePlainSQL("select email from coopstudent");
+        while ($row = OCI_Fetch_Array($email_list, OCI_BOTH)) {
+            if ($row["EMAIL"] == $email){
+                return true;
+                break;
+            }
+        }
+        return false;
+    
+}
+
+if(!isRegistered($email)){
+    echo "<script>window.location.href=\"http://www.ugrad.cs.ubc.ca/~n6o8/register.php\";</script>";
+}
 
 
 
