@@ -79,6 +79,7 @@ h2 {
         margin-top:5px;
 }
 
-table.results {
+div.results {
         min-width: 500px;
+        float: left;
 }

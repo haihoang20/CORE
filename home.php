@@ -406,12 +406,14 @@ if ($db_conn) {
 	} else
 	if (array_key_exists('skillsetqueryprep', $_GET)) {
 		$skills = executePlainSQL("select name from skills");
+                echo "<div class='results'>";
 		echo "<br>Skills:<br>";
 		echo "<form method='GET' action='home.php'>";
 		while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
 			echo "<input type='checkbox' name='skill[]' id='skill' value='".$row["NAME"]."'/>".$row["NAME"]."<br />";
 		}
 		echo "<p><input type='submit' value='Submit' name='skillsetsearch'></p></form>";
+                echo "</div>";
 	} else
 	if (array_key_exists('skillsetsearch', $_GET)) {
 		$ss = $_GET['skill'];
