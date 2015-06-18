@@ -5,9 +5,9 @@ $success = True; //keep track of errors so it redirects the page only if there a
 $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
 $message = "";
 $Error = "";
-
-
 $NAME = "";
+
+
 if (array_key_exists('name', $_GET)) {$NAME = $_GET['name'];}
 if (array_key_exists('old_name', $_POST)) {$NAME = $_POST['old_name'];}
 
@@ -116,5 +116,9 @@ echo '<div class="success">' .$message . '</div>';
 
         OCILogoff($db_conn);
 }
+
+echo "<script>";
+echo "gapi.load('auth2',function(){gapi.auth2.init();});";
+echo "</script>";
         ?>
 </div>

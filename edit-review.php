@@ -108,5 +108,9 @@ echo '<div class="success">' .$message . '</div>';
  
         OCILogoff($db_conn);
 }
+
+echo "<script>";
+echo "gapi.load('auth2',function(){gapi.auth2.init();});";
+echo "</script>";
         ?>
 </div>

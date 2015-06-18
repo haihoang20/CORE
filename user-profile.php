@@ -1,15 +1,81 @@
+<script async>
+
+    function getCookie(name) {
+        var dc = document.cookie;
+        var prefix = name + "=";
+        var begin = dc.indexOf("; " + prefix);
+        if (begin == -1) {
+            begin = dc.indexOf(prefix);
+            if (begin != 0) return null;
+        }else{
+            begin += 2;
+            var end = document.cookie.indexOf(";", begin);
+            if (end == -1) {
+                end = dc.length;
+            }
+        }
+    
+        return unescape(dc.substring(begin + prefix.length, end));
+    }
+
+    var validCookie = getCookie("valid");
+    if(validCookie == null){
+        window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
+  }     
+    
+</script>
 <?php
 require 'user-profile-functions.php';
 include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
 
-//$_COOKIE['user'];
+$email =  $_COOKIE['user'];
+
+$isAdmin = (empty($_COOKIE['admin'])) ? false : true;
+$query_string = "select * from coopstudent where email='" . $email . "'";
+$query_user = executePlainSQL($query_string);
+$row = OCI_Fetch_Array($query_user, OCI_BOTH);
+$coop_id = $row["ID"];
+$coop_name = $row["NAME"];
+$coop_email = $row["EMAIL"];
+$coop_year = $row["YEAR"];
+$coop_dname = $row["DNAME"];
+
+function checkAdmin($email){
+    $email_list = executePlainSQL("select email from admin");
+
+        while ($row = OCI_Fetch_Array($email_list, OCI_BOTH)) {
+            if ($row["EMAIL"] == $email){
+                return true;
+                break;
+            }
+        }
+        return false;
+    
+}
+
+
+function isRegistered($email){
+    $email_list = executePlainSQL("select email from coopstudent");
+        while ($row = OCI_Fetch_Array($email_list, OCI_BOTH)) {
+            if ($row["EMAIL"] == $email){
+                return true;
+                break;
+            }
+        }
+        return false;
+    
+}
+
+if(!checkAdmin($email) && !isRegistered($email)){
+    echo "<script>window.location.href=\"http://www.ugrad.cs.ubc.ca/~n6o8/register.php\";</script>";
+}
 
 
 /****** Error Checking ******/
 $Error = "";
-		if (array_key_exists('submit_review', $_POST)) {
+        if (array_key_exists('submit_review', $_POST)) {
                         
                                 if ('---' == $_POST['companyname']) {
                                         $Error = "Please select a company name.";
@@ -34,7 +100,7 @@ $Error = "";
                                 }
                 }
 
-		else if (array_key_exists('add_company', $_POST)) {
+        else if (array_key_exists('add_company', $_POST)) {
                 
                                 if (empty($_POST['companyname'])) {
                                         $Error = "Company name cannot be empty.";
@@ -50,7 +116,7 @@ $Error = "";
                                 }
 
                 }
-		else if (array_key_exists('add_skill', $_POST)) {
+        else if (array_key_exists('add_skill', $_POST)) {
         
                                 if (empty($_POST['skillname'])) {
                                         $Error = "Skill name cannot be empty.";
@@ -63,7 +129,7 @@ $Error = "";
                                 
 
                 }
-		else if (array_key_exists('add_position', $_POST)) {
+        else if (array_key_exists('add_position', $_POST)) {
         
                                 if (empty($_POST['positiontitle'])) {
                                         $Error = "Position title cannot be empty.";
@@ -186,10 +252,10 @@ if ($db_conn) {
                         //}
         }
 
-	if ($_POST && $success) {
+    if ($_POST && $success) {
                 header("location: user-profile.php");
                 exit;
-	} else {
+    } else {
 
 echo '<div class="error">' . $Error . '</div>';
 ?>
@@ -297,7 +363,28 @@ echo '<div class="error">' . $Error . '</div>';
 <div class="clear-both"></div>
 
 <?php
-		$review = executePlainSQL("select * from review");
+
+echo "<script>";
+echo "gapi.load('auth2',function(){gapi.auth2.init();});";
+echo "</script>";
+
+if($isAdmin){
+    $review = executePlainSQL("select * from review");
+    $users = executePlainSQL("select * from coopstudent");
+
+    echo "<br>Coop Students:<br>";
+                echo "<table>";
+                echo "<tr><th>Name</th></tr>";
+                while ($user = OCI_Fetch_Array($users, OCI_BOTH)) {
+                        echo "<tr><td>" . $user['NAME'] . "</td><td><a href='edit-coopstudent.php?email=" . $user["EMAIL"] . "'>Edit User</a></td></tr>";
+                }
+                echo "</table>";
+}else{
+    $review = executePlainSQL("select * from review where coopstudid= " . $coop_id);
+}
+
+
+                $review = executePlainSQL("select * from review");
                 $skills = executePlainSQL("select * from skill");
                 printReviews($review);
                 
@@ -346,14 +433,24 @@ echo '<div class="error">' . $Error . '</div>';
                 }
                 echo "</table>";
 
-	}
+                if (!$isAdmin){
+                    echo "<br>Your Profile Information:<br>";
+                    echo "<table>";
+                    echo "<tr><th>ID</th><th>Name</th><th>Email</th><th>Year</th><th>Department</th></tr>";
+                    echo "<tr><td>" . $coop_id. "</td><td>" . $coop_name . "</td><td>" . $coop_email . "</td><td>" . $coop_year. "</td><td>" . $coop_dname. "</td><td><a href='edit-coopstudent.php?email=" . $coop_email . "'>Edit Profile</a></td></tr>";
+                    echo "</table>";
+                }
 
-	//Commit to save changes...
-	OCILogoff($db_conn);
+
+
+    }
+
+    //Commit to save changes...
+    OCILogoff($db_conn);
 } else {
-	echo "cannot connect";
-	$e = OCI_Error(); // For OCILogon errors pass no handle
-	echo htmlentities($e['message']);
+    echo "cannot connect";
+    $e = OCI_Error(); // For OCILogon errors pass no handle
+    echo htmlentities($e['message']);
   }
                 
 ?>

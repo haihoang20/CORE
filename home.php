@@ -85,26 +85,13 @@ include 'header.php';
 </div>
 
 <script>
+	
+   
 
-  function signOut() {
-	var auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      console.log('User signed out.');
-    });
-    document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    document.cookie = "valid=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-	window.location.href = "http://www.ugrad.cs.ubc.ca/~" . $core_cs_id ."/landing_page.php";
-  }
-
-  var validCookie = getCookie("valid");
-  if(validCookie == null){
-  	window.location.href = "http://www.ugrad.cs.ubc.ca/~" . $core_cs_id . "/landing_page.php";
-  }
-
-  var myCookie = getCookie("user");
-  if(myCookie == null){
-  	document.cookie="user=" + window.location.hash.substr(1,window.location.hash.length-1);
-  }
+   if(getCookie("reloaded")== null){
+   	  document.cookie="reloaded=true"; 
+  	  window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/home.php";
+   }
 
   function getCookie(name) {
     var dc = document.cookie;
@@ -125,10 +112,19 @@ include 'header.php';
     return unescape(dc.substring(begin + prefix.length, end));
 }
 
+  var validCookie = getCookie("valid");
+  if(validCookie == null){
+  	window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
+  }
+
+  var myCookie = getCookie("user");
+  if(myCookie == null){
+  	document.cookie="user=" + window.location.hash.substr(1,window.location.hash.length-1);
+  }
 
 </script>
 
-<a class="signout" href="#" onclick="signOut();">Sign out</a>
+
 
 
 <?php
@@ -138,12 +134,43 @@ $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
 
 $cookie_name = 'user';
 
+function checkAdmin($email){
+    $email_list = executePlainSQL("select email from admin");
+
+        while ($row = OCI_Fetch_Array($email_list, OCI_BOTH)) {
+            if ($row["EMAIL"] == $email){
+                return true;
+                break;
+            }
+        }
+        return false;
+    
+}
+
+function isRegistered($email){
+    $email_list = executePlainSQL("select email from coopstudent");
+        while ($row = OCI_Fetch_Array($email_list, OCI_BOTH)) {
+            if ($row["EMAIL"] == $email){
+                return true;
+                break;
+            }
+        }
+        return false;
+    
+}
+
 
 $email =  $_COOKIE[$cookie_name];
 
-echo "<br> The email is " . $email . "<br>";
-echo "<br> The cookie name is " . $cookie_name . "<br>";
-echo "<br> The cookie value is " . $_COOKIE[$cookie_name] . "<br>";
+
+
+
+if(checkAdmin($email)){
+	echo "<script>document.cookie=\"admin=yes\"</script>";
+}else if(!isRegistered($email)){
+	echo "<script>window.location.href=\"http://www.ugrad.cs.ubc.ca/~n6o8/register.php\";</script>";
+}
+
 
 echo "<script>";
 echo "gapi.load('auth2',function(){gapi.auth2.init();});";
@@ -393,7 +420,8 @@ if ($db_conn) {
 	} else
 	if (array_key_exists('skillsetqueryprep', $_GET)) {
 		$skills = executePlainSQL("select name from skill");
-                echo "<div class='results'>";
+
+        echo "<div class='results'>";
 		echo "<br>Skills:<br>";
 		echo "<form method='GET' action='home.php'>";
 		while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {

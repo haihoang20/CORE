@@ -29,7 +29,7 @@
 
         document.cookie="valid=yes";
 
-        window.location.href = "http://www.ugrad.cs.ubc.ca/~" . $core_cs_id . "/home.php#" + profile.getEmail();
+        window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/home.php#" + profile.getEmail();
     }
 
 
