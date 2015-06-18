@@ -45,6 +45,18 @@ function printPosition($position) { //prints results from a select statement
 
 }
 
+function printPositionWithoutSkills($position) {
+		echo "<td>" . $position["TITLE"] . "</td><td>" . $position["CNAME"] . "</td><td>" . $position["DUTIES"] . "</td>";
+}
+
+function printSkillsForPosition($skills) {
+
+	while ($skill = OCI_Fetch_Array($skills, OCI_BOTH)) {
+		echo $skill["SNAME"] . " | ";
+        }
+
+}
+
 // Print CompanyType tuples with all attributes
 function printCompanyType($companytype) { //prints results from a select statement
 	echo "<br>Company Type:<br>";
