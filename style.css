@@ -6,7 +6,7 @@ h2 {
 }
 
 .form {
-        width: 300px;
+        width: 575px;
         background:lightblue;
         padding: 5px;
         padding-left: 15px;
@@ -18,6 +18,7 @@ h2 {
 
 .user_profile .form {
         height: 500px;
+        width: 300px;
 }
 
 .user_profile .form select, 
@@ -39,9 +40,23 @@ h2 {
         text-align: center;
         
 }
+.nav-menu a {
+        text-decoration: none;
+        border: 1px solid black;
+        padding: 5px;
+        background:beige;
+        width: 155px;
+        display: block;
+        color:black;
+        font-weight:bold;
+}
+.nav-menu a:hover {
+        color:white;
+}
 
 .nav-menu li {
-        margin-right:10px;
+        margin: 0 auto 15px;
+        width:200px;
 }
 
 .error {
@@ -53,10 +68,15 @@ h2 {
         margin-bottom:10px;
 }
 
-.advanced_search label {
+.search label {
         width: 215px;
         float: left;
         display:block;
+
+}
+
+.search input[type=text] {
+        width: 430px;
 
 }
 
@@ -64,9 +84,16 @@ h2 {
         clear: both;
 }
 
+.advanced_search input[type=text] {
+        width:300px;
+}
+
 .edit_position.form input {
         display: block;
         margin-top:5px;
 }
 
-
+div.results {
+        min-width: 500px;
+        float: left;
+}

@@ -9,7 +9,11 @@ include 'header.php';
 <!-- LAYOUT AND FORMS FOR CORE HOME PAGE -->
 
 <!-- Simple Search of Reviews -->
-<div class="simple_search form">
+<div class="home">
+<h2>Home</h2>
+
+
+<div class="simple_search form search">
   <h3> Simple search of the reviews: <br /></h3>
   <p>Search for company name, position title, or a comment containing... </p>
   <form method="GET" action="home.php">
@@ -21,7 +25,7 @@ include 'header.php';
   	<input type='checkbox' name='attribute[]' id='attribute' value='RATING'/>Rating<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='REVIEW_COMMENT'/>Comment<br />
   </font>
-  <input type="submit" value="Go" name="simplesearch"></p>
+  <input type="submit" value="Simple Search" name="simplesearch"></p>
   </form>
 <!-- </div> -->
 
@@ -39,7 +43,7 @@ include 'header.php';
 <div>  <br><label> City </label><input type="text" name="city" size="6"></div>
 <div>  <br><label> Province/State </label><input type="text" name="province" size="6"></div>
 <div>  <br><label> Country </label><input type="text" name="country" size="6"></div>
-  </p><p><input type="submit" value="Go" name="advsearch"></p>
+  </p><p><input type="submit" value="Advanced Search" name="advsearch"></p>
   </form>
 </div>
 
@@ -53,7 +57,6 @@ include 'header.php';
   <input type="submit" value="Company Types" name="getcompanytypes">
   <input type="submit" value="Departments" name="getdepartments">
   <input type="submit" value="Skills" name="getskills">
-  <input type="submit" value="Skills By Position" name ="getpositionskills">
   <input type="submit" value="Locations" name="getlocations">
   <input type="submit" value="Company Locations" name="getcompanylocations">
   </form>
@@ -71,7 +74,7 @@ include 'header.php';
 
 <form method="GET" action="home.php">
   <input type="submit" value="Most Popular Vancouver Companies" name="getvancom">
-  <input type="submit" value="Departments With Most Jobs" name="deptjobs">
+  <input type="submit" value="Department With Most Jobs" name="deptjobs">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
 </form>
 
@@ -249,7 +252,7 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 		$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname
 														   from positionrequiresskill
 														   where sname in (select name as sname
-														   				   from skill
+														   				   from skills
 														   				   where $sqlskills))";
 		executePlainSQL($sqlmakeview);
 	}
@@ -322,7 +325,7 @@ function skillsetSearch($skillset) {
 	echo "</p>";
 
 	$viewqry = "create view invalidposskill as (select pfc.cname, pfc.title, s.name as sname
-												from positionforcompany pfc, skill s
+												from positionforcompany pfc, skills s
 												where $p1
 												minus
 												(select prs.cname, prs.ptitle, prs.sname
@@ -385,13 +388,15 @@ if ($db_conn) {
 		OCICommit($db_conn);
 	} else
 	if (array_key_exists('skillsetqueryprep', $_GET)) {
-		$skills = executePlainSQL("select name from skill");
+		$skills = executePlainSQL("select name from skills");
+                echo "<div class='results'>";
 		echo "<br>Skills:<br>";
 		echo "<form method='GET' action='home.php'>";
 		while ($row = OCI_Fetch_Array($skills, OCI_BOTH)) {
 			echo "<input type='checkbox' name='skill[]' id='skill' value='".$row["NAME"]."'/>".$row["NAME"]."<br />";
 		}
 		echo "<p><input type='submit' value='Submit' name='skillsetsearch'></p></form>";
+                echo "</div>";
 	} else
 	if (array_key_exists('skillsetsearch', $_GET)) {
 		$ss = $_GET['skill'];
@@ -424,10 +429,6 @@ if ($db_conn) {
       } else
       if (array_key_exists('getskills', $_GET)){
         printSkills(getAllFromTable("skill"));
-        OCICommit($db_conn);
-      } else
-      if (array_key_exists('getpositionskills', $_GET)){
-        printPosReqSkills(getAllFromTable("positionrequiresskill"));
         OCICommit($db_conn);
       } else
       if (array_key_exists('getlocations', $_GET)){
@@ -488,3 +489,5 @@ if ($db_conn) {
 }
 
 ?>
+
+</div>
