@@ -62,7 +62,9 @@ coopstudid integer not null,
 postitle varchar(50),
 rating integer not null,
 FOREIGN KEY (companyname) references CoopCompany(name),
-FOREIGN KEY (coopstudid) references CoopStudent(id),
+	ON DELETE CASCADE,
+FOREIGN KEY (coopstudid) references CoopStudent(id)
+	ON DELETE CASCADE,
 FOREIGN KEY (postitle) references PositionForCompany(title),
 CHECK (rating > 0 AND rating < 6)
 );
@@ -141,6 +143,9 @@ insert into Admin values
 
 insert into Admin values
 (105, 'Eliza', 'liza@core.com');
+
+insert into Admin values
+(106, 'Kevin', 'ktanyag@gmail.com');
 
 
 insert into Skill values

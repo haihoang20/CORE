@@ -21,19 +21,7 @@
     var validCookie = getCookie("valid");
     if(validCookie == null){
         window.location.href = "http://www.ugrad.cs.ubc.ca/~n6o8/landing_page.php";
-  } 
-
-    setTimeout(function(){
-        if(getCookie("admin") == null){
-            var cform = document.getElementById("add_company_form_id");
-            var sform = document.getElementById("add_skill_form_id");
-            var pform = document.getElementById("add_position_form_id");
-            cform.style.display = 'none';
-            sform.style.display = 'none';
-            pform.style.display = 'none';
-        }
-    }, 300);
-    
+  }     
     
 </script>
 <?php
@@ -47,10 +35,27 @@ $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
 $email =  $_COOKIE['user'];
 
 $isAdmin = (empty($_COOKIE['admin'])) ? false : true;
-$query_string = "select id from coopstudent where email='" . $email . "'";
+$query_string = "select * from coopstudent where email='" . $email . "'";
 $query_user = executePlainSQL($query_string);
 $row = OCI_Fetch_Array($query_user, OCI_BOTH);
 $coop_id = $row["ID"];
+$coop_name = $row["NAME"];
+$coop_email = $row["EMAIL"];
+$coop_year = $row["YEAR"];
+$coop_dname = $row["DNAME"];
+
+function checkAdmin($email){
+    $email_list = executePlainSQL("select email from admin");
+
+        while ($row = OCI_Fetch_Array($email_list, OCI_BOTH)) {
+            if ($row["EMAIL"] == $email){
+                return true;
+                break;
+            }
+        }
+        return false;
+    
+}
 
 
 function isRegistered($email){
@@ -65,11 +70,11 @@ function isRegistered($email){
     
 }
 
-if(!isRegistered($email)){
+if(checkAdmin($email)){
+    echo "<script>document.cookie=\"admin=yes\"</script>";
+}else if(!isRegistered($email)){
     echo "<script>window.location.href=\"http://www.ugrad.cs.ubc.ca/~n6o8/register.php\";</script>";
 }
-
-
 
 /****** Error Checking ******/
 $Error = "";
@@ -338,8 +343,22 @@ echo "</script>";
 
 if($isAdmin){
     $review = executePlainSQL("select * from review");
+    $users = executePlainSQL("select * from coopstudent");
+
+    echo "<br>Coop Students:<br>";
+                echo "<table>";
+                echo "<tr><th>Name</th></tr>";
+                while ($user = OCI_Fetch_Array($users, OCI_BOTH)) {
+                        echo "<tr><td>" . $user['NAME'] . "</td><td><a href='edit-coopstudent.php?email=" . $user["EMAIL"] . "'>Edit User</a></td></tr>";
+                }
+                echo "</table>";
+}else{
+    $review = executePlainSQL("select * from review where coopstudid= " . $coop_id);
+}
+
     $company = executePlainSQL("select * from coopcompany");
     $skills = executePlainSQL("select * from skill");
+    printReviews($review); 
     printCompany($company);
     printSkills($skills);
     echo "<br>Positions:<br>";
@@ -359,9 +378,14 @@ if($isAdmin){
                         echo "</tr>";
                 }
                 echo "</table>";
-}else{
-    $review = executePlainSQL("select * from review where coopstudid= " . $coop_id);
+if (!$isAdmin){
+    echo "<br>Your Profile Information:<br>";
+                echo "<table>";
+                echo "<tr><th>ID</th><th>Name</th><th>Email</th><th>Year</th><th>Department</th></tr>";
+                echo "<tr><td>" . $coop_id. "</td><td>" . $coop_name . "</td><td>" . $coop_email . "</td><td>" . $coop_year. "</td><td>" . $coop_dname. "</td><td><a href='edit-coopstudent.php?email=" . $coop_email . "'>Edit Profile</a></td></tr>";
+                echo "</table>";
 }
+    
 
                 //$company = executePlainSQL("select * from coopcompany");
                 //$department = executePlainSQL("select * from department");
@@ -369,7 +393,7 @@ if($isAdmin){
                 //$location = executePlainSQL("select * from location");
                 //$companytype = executePlainSQL("select * from companytype");
 
-                printReviews($review); 
+                
                 //printLocation($location);
                 
                 //$result = executePlainSQL("select * from tab1");
