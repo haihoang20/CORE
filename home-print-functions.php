@@ -51,16 +51,23 @@ function printHiresFromForCompany($HiresFrom) {
 }
 
 // Print Position tuples with all attributes
-function printPosition($position) { //prints results from a select statement
-	echo "<div class='results'><h3>Positions:</h3>";
-	echo "<table >";
-	echo "<tr><th>Title</th><th>Company</th><th>Duties</th></tr>";
-
-	while ($row = OCI_Fetch_Array($position, OCI_BOTH)) {
-		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["DUTIES"] . "</td></tr>"; //or just use "echo $row[0]"
+function printPosition($positions) { //prints results from a select statement
+	echo "<h3>Positions:</h3>";
+	echo "<table>";
+	echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>Required Skills</th></tr>";
+	while ($position = OCI_Fetch_Array($positions, OCI_BOTH)) {
+					echo "<tr>";
+					printPositionWithoutSkills($position);
+					$s = array ( array (
+									":bind1" => $position["TITLE"],
+									":bind2" => $position["CNAME"]));
+					$skills = executeBoundSQL("select sname from positionrequiresskill where ptitle=:bind1 and cname=:bind2", $s);
+					echo "<td>";
+					printSkillsForPosition($skills);
+					echo "</td>";
+					echo "</tr>";
 	}
-	echo "</table></div>";
-
+	echo "</table>";
 }
 
 function printPositionWithoutSkills($position) {
