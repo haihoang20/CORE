@@ -9,6 +9,10 @@ include 'header.php';
 <!-- LAYOUT AND FORMS FOR CORE HOME PAGE -->
 
 <!-- Simple Search of Reviews -->
+<div class="home">
+<h2>Home</h2>
+
+
 <div class="simple_search form">
   <h3> Simple search of the reviews: <br /></h3>
   <p>Search for company name, position title, or a comment containing... </p>
@@ -501,3 +505,5 @@ if ($db_conn) {
 }
 
 ?>
+
+</div>
