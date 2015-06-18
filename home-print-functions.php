@@ -36,10 +36,10 @@ function printCompany($company) { //prints results from a select statement
 function printPosition($position) { //prints results from a select statement
 	echo "<br>Positions:<br>";
 	echo "<table>";
-	echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>City</th><th>Province</th><th>Type</th></tr>";
+	echo "<tr><th>Title</th><th>Company</th><th>Duties</th></tr>";
 
 	while ($row = OCI_Fetch_Array($position, OCI_BOTH)) {
-		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["DUTIES"] . "</td><td>" . $row["CITY"] . "</td><td>" . $row["PROVINCE"] . "</td></tr>"; //or just use "echo $row[0]"
+		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td><td>" . $row["DUTIES"] . "</td></tr>"; //or just use "echo $row[0]"
 	}
 	echo "</table>";
 
@@ -126,7 +126,7 @@ function printCompanyLocation($companylocation) { //prints results from a select
 
 ////// INTERESTING QUERIES PRINTS ///////
 
-// Print the Top Skills desired for all jobs in the database, 
+// Print the Top Skills desired for all jobs in the database,
 // with the name of the skill and the count of jobs listed as requiring it
 function printTopSkills($topskills) { //prints results from a select statement
 	echo "<br>Most Desired Skills:<br>";
