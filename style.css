@@ -78,4 +78,6 @@ h2 {
         margin-top:5px;
 }
 
-
+table.results {
+        min-width: 500px;
+}
