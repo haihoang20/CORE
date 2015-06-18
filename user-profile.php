@@ -298,21 +298,14 @@ echo '<div class="error">' . $Error . '</div>';
 
 <?php
 		$review = executePlainSQL("select * from review");
-                //$department = executePlainSQL("select * from department");
                 $skills = executePlainSQL("select * from skill");
-                //$location = executePlainSQL("select * from location");
-                //$companytype = executePlainSQL("select * from companytype");
                 printReviews($review);
-                //printCompanyType($companytype);
                 
-                
-                //printDepartment($department);
                 printSkills($skills);
-                //printLocation($location);
                 
                 /****** Print Company Stuff **********/
 
-                echo "<br>Companies:<br>";
+                echo "<h3>Companies:</h3>";
                 echo "<table>";
                 echo "<tr><th>Name</th><th>About</th><th>Type</th><th>Hires From</th></tr>";
 
@@ -334,7 +327,7 @@ echo '<div class="error">' . $Error . '</div>';
                 echo "</table>";
 
                 /****** Print Positions Stuff ********/
-                echo "<br>Positions:<br>";
+                echo "<h3>Positions:</h3>";
                 echo "<table>";
                 echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>required skills</th></tr>";
                 $positions = executePlainSQL("select * from positionforcompany");
