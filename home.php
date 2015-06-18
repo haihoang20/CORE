@@ -177,17 +177,13 @@ function simpleSearch($sphrase, $attrsToShow) {
 	$results = executePlainSQL($sqlquery);
 
 	// Print results in table
-	$row = OCI_Fetch_Array($results, OCI_BOTH);
-	if (empty($row)) {
-		echo "<br>Reviews:<br>";
-		echo "No matching reviews for '".substr($sphrase,2,strlen($sphrase)-4)."'.";
-	} else if ($selectwhat == "*") {
+	if ($selectwhat == "*") {
 		printReviews($results);
 	} else {
 		echo "<br>Reviews:<br>";
 		echo "<table>";
 		echo $tableheader;
-		while ($row) {
+		while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
 			$rows = '<tr>';
 			foreach ($attrsToShow as $attr) {
 				$rows = $rows."<td>".$row[$attr]."</td>";
@@ -228,7 +224,7 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 	}
 	if (!empty($rating)) {
 		$reqs = helperAddOptionalAnd($reqs);
-		$reqs = $reqs."r.rating >= $rating";
+		$reqs = $reqs."r.rating >=".(int)$rating;
 	}
 	if (!empty($dateb)) {
 		$reqs = helperAddOptionalAnd($reqs);
@@ -287,15 +283,9 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 	$sqlquery = "select $selectwhat
 				 from review r $andfrom
 				 $reqs";
+	echo $sqlquery;
 	$results = executePlainSQL($sqlquery);
-
-	$resultrows = OCI_Fetch_Array($results, OCI_BOTH);
-	if (empty($resultrows)) {
-		echo "<br>Reviews:<br>";
-		echo "No matching reviews found.";
-	} else {
-		printReviews($results);
-	}
+	printReviews($results);
 	if (!empty($skills)) {
 		executePlainSQL("drop view validpostitlecname");
 	}
@@ -342,7 +332,7 @@ function skillsetSearch($skillset) {
 												 from positionrequiresskill prs
 												 where $p2))";
 	executePlainSQL($viewqry);
-	$qry = "select cname, title
+	$qry = "select cname, title, duties
 			from positionforcompany
 			minus
 			select cname, title
@@ -358,6 +348,7 @@ function skillsetSearch($skillset) {
 	while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
 		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td></tr>";		}
 	echo "</table>";
+	printPosition($results);
         echo "</div>";
 }
 
@@ -419,7 +410,11 @@ if ($db_conn) {
 	} else
 	if (array_key_exists('skillsetsearch', $_GET)) {
 		$ss = $_GET['skill'];
-		skillsetsearch($ss);
+		if (empty($ss)) {
+			echo "<br>Skill Set Search: <br> Please select at least one skill. <br>";
+		} else {
+			skillsetsearch($ss);
+		}
 		OCICommit($db_conn);
 	} else
       if (array_key_exists('getreviews', $_GET)){
