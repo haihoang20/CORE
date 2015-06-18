@@ -6,7 +6,7 @@ h2 {
 }
 
 .form {
-        width: 300px;
+        width: 575px;
         background:lightblue;
         padding: 5px;
         padding-left: 15px;
@@ -53,15 +53,24 @@ h2 {
         margin-bottom:10px;
 }
 
-.advanced_search label {
+.search label {
         width: 215px;
         float: left;
         display:block;
 
 }
 
+.search input[type=text] {
+        width: 430px;
+
+}
+
 .advanced_search div {
         clear: both;
+}
+
+.advanced_search input[type=text] {
+        width:300px;
 }
 
 .edit_position.form input {
