@@ -332,7 +332,7 @@ function skillsetSearch($skillset) {
 												 from positionrequiresskill prs
 												 where $p2))";
 	executePlainSQL($viewqry);
-	$qry = "select cname, title, duties
+	$qry = "select cname, title
 			from positionforcompany
 			minus
 			select cname, title
@@ -341,15 +341,9 @@ function skillsetSearch($skillset) {
 	executePlainSQL("drop view invalidposskill");
 
 	// Display the Results
-        echo "<div class='results'";
-	echo "<br>Positions:<br>";
-	echo "<table>";
-	echo "<tr><th>Title</th><th>Company</th></tr>";
-	while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
-		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td></tr>";		}
-	echo "</table>";
-	printPosition($results);
-        echo "</div>";
+    echo "<div class='results'";	
+    printPosition($results);
+	echo "</div>";
 }
 
 // Gets all tuples and attributes from a given table
