@@ -74,7 +74,7 @@ include 'header.php';
 
 <form method="GET" action="home.php">
   <input type="submit" value="Most Popular Vancouver Companies" name="getvancom">
-  <input type="submit" value="Department With Most Jobs" name="deptjobs">
+  <input type="submit" value="Departments With Most Jobs" name="deptjobs">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
 </form>
 
@@ -252,7 +252,7 @@ function advancedSearch($cname, $ctype, $postitle, $rating, $ccontains, $dateb, 
 		$sqlmakeview = "create view validpostitlecname as (select ptitle as postitle, cname
 														   from positionrequiresskill
 														   where sname in (select name as sname
-														   				   from skills
+														   				   from skill
 														   				   where $sqlskills))";
 		executePlainSQL($sqlmakeview);
 	}
@@ -325,14 +325,14 @@ function skillsetSearch($skillset) {
 	echo "</p>";
 
 	$viewqry = "create view invalidposskill as (select pfc.cname, pfc.title, s.name as sname
-												from positionforcompany pfc, skills s
+												from positionforcompany pfc, skill s
 												where $p1
 												minus
 												(select prs.cname, prs.ptitle, prs.sname
 												 from positionrequiresskill prs
 												 where $p2))";
 	executePlainSQL($viewqry);
-	$qry = "select cname, title, duties
+	$qry = "select cname, title
 			from positionforcompany
 			minus
 			select cname, title
@@ -341,15 +341,9 @@ function skillsetSearch($skillset) {
 	executePlainSQL("drop view invalidposskill");
 
 	// Display the Results
-        echo "<div class='results'";
-	echo "<br>Positions:<br>";
-	echo "<table>";
-	echo "<tr><th>Title</th><th>Company</th></tr>";
-	while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
-		echo "<tr><td>" . $row["TITLE"] . "</td><td>" . $row["CNAME"] . "</td></tr>";		}
-	echo "</table>";
-	printPosition($results);
-        echo "</div>";
+    echo "<div class='results'";
+    printPosition($results);
+	echo "</div>";
 }
 
 // Gets all tuples and attributes from a given table
@@ -398,7 +392,7 @@ if ($db_conn) {
 		OCICommit($db_conn);
 	} else
 	if (array_key_exists('skillsetqueryprep', $_GET)) {
-		$skills = executePlainSQL("select name from skills");
+		$skills = executePlainSQL("select name from skill");
                 echo "<div class='results'>";
 		echo "<br>Skills:<br>";
 		echo "<form method='GET' action='home.php'>";
@@ -461,14 +455,19 @@ if ($db_conn) {
       if (array_key_exists('deptjobs', $_GET)){
         executePlainSql("drop view temp");
         executePlainSql("create view Temp(cname, poscount) as (select cname, COUNT(*) as poscount
-        													   from PositionForCompany
-        													   GROUP BY cname)");
-        $topdept = executePlainSQL("select dname, max(posc) as num
-        							from (select dname, sum(poscount) as posc
-        								  from companyhiresfordept c, temp t
-        								  where t.cname=c.cname group by dname)
-        							where rownum<=1
-        							group by dname");
+        													                             from PositionForCompany
+        													                             GROUP BY cname)");
+        executePlainSql("drop view temp2");
+        executePlainSql("create view Temp2(dname, num) as (select dname, max(posc) as num
+                                                            from (select dname, sum(poscount) as posc
+                                                                  from companyhiresfordept c, temp t
+                                                                  where t.cname=c.cname
+                                                                  group by dname)
+                                                            group by dname)");
+         $topdept = executePlainSQL("select dname, num
+                                     from Temp2
+                                     where num>=all(select num
+                                                    from Temp2)");
 
         printTopDepartment($topdept);
         OCICommit($db_conn);
