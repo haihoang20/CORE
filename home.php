@@ -74,7 +74,7 @@ include 'header.php';
 
 <form method="GET" action="home.php">
   <input type="submit" value="Most Popular Vancouver Companies" name="getvancom">
-  <input type="submit" value="Department With Most Jobs" name="deptjobs">
+  <input type="submit" value="Departments With Most Jobs" name="deptjobs">
   <input type="submit" value="Top 5 Desired Skills" name="topskills">
 </form>
 
@@ -466,12 +466,15 @@ if ($db_conn) {
         executePlainSql("create view Temp(cname, poscount) as (select cname, COUNT(*) as poscount
         													   from PositionForCompany
         													   GROUP BY cname)");
-        $topdept = executePlainSQL("select dname, max(posc) as num
-        							from (select dname, sum(poscount) as posc
-        								  from companyhiresfordept c, temp t
-        								  where t.cname=c.cname group by dname)
-        							where rownum<=1
-        							group by dname");
+        executePlainSql("drop view temp2");
+        executePlainSql("create view Temp2(dname, num) as (select dname, max(posc) as num
+                                    from (select dname, sum(poscount) as posc
+                                          from companyhiresfordept c, temp t
+                                          where t.cname=c.cname group by dname)
+                                    group by dname)");
+         $topdept = executePlainSQL("select dname, num
+                                     from Temp2
+                                     where num>=all(select num from Temp2)");
 
         printTopDepartment($topdept);
         OCICommit($db_conn);
