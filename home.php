@@ -13,7 +13,7 @@ include 'header.php';
 <h2>Home</h2>
 
 
-<div class="simple_search form">
+<div class="simple_search form search">
   <h3> Simple search of the reviews: <br /></h3>
   <p>Search for company name, position title, or a comment containing... </p>
   <form method="GET" action="home.php">
@@ -25,7 +25,7 @@ include 'header.php';
   	<input type='checkbox' name='attribute[]' id='attribute' value='RATING'/>Rating<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='REVIEW_COMMENT'/>Comment<br />
   </font>
-  <input type="submit" value="Go" name="simplesearch"></p>
+  <input type="submit" value="Simple Search" name="simplesearch"></p>
   </form>
 <!-- </div> -->
 
@@ -43,7 +43,7 @@ include 'header.php';
 <div>  <br><label> City </label><input type="text" name="city" size="6"></div>
 <div>  <br><label> Province/State </label><input type="text" name="province" size="6"></div>
 <div>  <br><label> Country </label><input type="text" name="country" size="6"></div>
-  </p><p><input type="submit" value="Go" name="advsearch"></p>
+  </p><p><input type="submit" value="Advanced Search" name="advsearch"></p>
   </form>
 </div>
 
