@@ -128,7 +128,7 @@ include 'header.php';
 
 </script>
 
-<a href="#" onclick="signOut();">Sign out</a>
+<a class="signout" href="#" onclick="signOut();">Sign out</a>
 
 
 <?php
