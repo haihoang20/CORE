@@ -1,5 +1,5 @@
 <?php
-require 'functions.php';
+require 'user-profile-functions.php';
 include 'header.php';
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon($core_oracle_user, $core_oracle_password, "ug");
@@ -73,15 +73,6 @@ $Error = "";
                                         $Error = "Company name cannot be empty.";
                                         $success = false;
                                 }
-                                //if (!empty($_POST['skill'])) {
-                                //        echo "SKILLS:";
-                                //        echo $_POST['skill'];
-                                //        foreach ($_POST['skill'] as $skill) {
-                                //                echo "skill:" . $skill; 
-                                //        }
-                                //        //print_r($_POST['skill']);
-                                //      $success = false;
-                                //}
 
                 }
         else if (array_key_exists('add_comphiresfromdept', $_POST)) {
@@ -133,6 +124,15 @@ if ($db_conn) {
 
                                              executeBoundSQL("insert into coopcompany values (:bind1, :bind2, :bind3)", $alltuples); 
 
+                                              foreach ($_POST['department'] as $dept) {
+                                                $s = array ( 
+                                                        array ( 
+                                                                ":bind1" => $_POST['companyname'],
+                                                                ":bind2" => $dept 
+                                                         ));
+                                             executeBoundSQL("insert into companyhiresfordept values(:bind1, :bind2)", $s);
+                                             }
+
                                              OCICommit($db_conn);
                         } else if (array_key_exists('add_skill', $_POST)) {
 
@@ -173,17 +173,17 @@ if ($db_conn) {
                                              OCICommit($db_conn);
                         }
 
-                        else if (array_key_exists('add_comphiresfromdept', $_POST)) {
-                                             $tuple = array (
-                                                ":bind1" => $_POST['companyname'],
-                                                ":bind2" => $_POST['departmentname'],
-                                             );
-                                             $alltuples = array (
-                                                $tuple
-                                             );
-                                             executeBoundSQL("insert into companyhiresfordept values (:bind1, :bind2)", $alltuples);
-                                             OCICommit($db_conn);
-                        }
+                        //else if (array_key_exists('add_comphiresfromdept', $_POST)) {
+                        //                     $tuple = array (
+                        //                        ":bind1" => $_POST['companyname'],
+                        //                        ":bind2" => $_POST['departmentname'],
+                        //                     );
+                        //                     $alltuples = array (
+                        //                        $tuple
+                        //                     );
+                        //                     executeBoundSQL("insert into companyhiresfordept values (:bind1, :bind2)", $alltuples);
+                        //                     OCICommit($db_conn);
+                        //}
         }
 
 	if ($_POST && $success) {
@@ -238,11 +238,18 @@ echo '<div class="error">' . $Error . '</div>';
                 echo "<p>";
                 printTypeNames($types);
                 echo "</p>";
+
+        
+                echo "<p>Company Hires From</p>";
+                $departments = executePlainSQL("select name from department");
+                printDepartmentNamesMulti($departments);
         }
         ?>
 
         <p>About Company</p>
         <p><textarea name="companyabout"></textarea></p>
+                
+
         <input type="submit" value="Add Company" name="add_company"></p>
         </form>
 </div>
@@ -286,50 +293,48 @@ echo '<div class="error">' . $Error . '</div>';
         </form>
 </div>
 
-<div class="add_company_hires_for_dept form">
-        <h3>Add a Hires-From Relationship</h3>
-        <form method="POST" action="user-profile.php">
-
-        <p>Company Name</p>
-        <?php
-        if ($db_conn) {
-
-                $cnames = executePlainSQL("select name from coopcompany");
-                printCompanyNames($cnames);
-        echo "<br /> hires from <br />";
-        echo "<p>Department Name</p>";
-                $dnames = executePlainSQL("select name from department");
-                printDepartmentNames($dnames);
-        }
-        ?>
-                
-        <div></div>
-        <input type="submit" value="Submit" name="add_comphiresfromdept"></p>
-        </form>
-</div>
 
 <div class="clear-both"></div>
 
 <?php
 		$review = executePlainSQL("select * from review");
-                $company = executePlainSQL("select * from coopcompany");
                 //$department = executePlainSQL("select * from department");
                 $skills = executePlainSQL("select * from skill");
                 //$location = executePlainSQL("select * from location");
                 //$companytype = executePlainSQL("select * from companytype");
                 printReviews($review);
                 //printCompanyType($companytype);
-                printCompany($company);
                 
                 
                 //printDepartment($department);
                 printSkills($skills);
                 //printLocation($location);
                 
-                //$result = executePlainSQL("select * from tab1");
-                //printResult($result);
-                
-                 echo "<br>Positions:<br>";
+                /****** Print Company Stuff **********/
+
+                echo "<br>Companies:<br>";
+                echo "<table>";
+                echo "<tr><th>Name</th><th>About</th><th>Type</th><th>Hires From</th></tr>";
+
+                $companies = executePlainSQL("select * from coopcompany");
+
+                while ($company = OCI_Fetch_Array($companies, OCI_BOTH)) {
+                        echo "<tr>";
+                        printCompanyWithoutHiresFrom($company);
+                        $s = array ( array ( 
+                                ":bind1" => $company["NAME"]
+                                ));
+                        $HiresFrom = executeBoundSQL("select d.name from department d, companyhiresfordept ch where d.name = ch.dname and ch.cname=:bind1", $s);
+                        echo "<td>";
+                        printHiresFromForCompany($HiresFrom);
+                        echo "</td>";
+                        echo "<td><a href='edit-company.php?name=" . $company["NAME"] . "'>Edit Company</a></td>";
+                        echo "</tr>";
+                }
+                echo "</table>";
+
+                /****** Print Positions Stuff ********/
+                echo "<br>Positions:<br>";
                 echo "<table>";
                 echo "<tr><th>Title</th><th>Company</th><th>Duties</th><th>required skills</th></tr>";
                 $positions = executePlainSQL("select * from positionforcompany");

@@ -15,7 +15,6 @@ include 'header.php';
   <form method="GET" action="home.php">
   <p><input type="text" name="searchPhrase" size="6"><br /><br />
   	<font size="2">What information would you like to view?<br />
-  	<input type='checkbox' name='attribute[]' id='attribute' value='RID'/>RID<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='REVIEW_DATE'/>Date<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='COMPANYNAME'/>Company<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='POSTITLE'/>Position<br />
