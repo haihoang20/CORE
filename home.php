@@ -15,6 +15,7 @@ include 'header.php';
   <form method="GET" action="home.php">
   <p><input type="text" name="searchPhrase" size="6"><br />
   	<font size="2">What information would you like to view?<br />
+  	<input type='checkbox' name='attribute[]' id='attribute' value='RID'/>RID<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='REVIEW_DATE'/>Date<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='COMPANYNAME'/>Company<br />
   	<input type='checkbox' name='attribute[]' id='attribute' value='POSTITLE'/>Position<br />
@@ -163,24 +164,33 @@ function simpleSearch($sphrase, $attrsToShow) {
 	}
 	$tableheader = $tableheader."</tr>";
 
-	$sqlquery = "select distinct $selectwhat
+	if (empty($selectwhat)) {
+		$selectwhat = "*";
+		$groupby = "";
+	}
+
+	$sqlquery = "select $selectwhat
 				 from review
-				 where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase";
+				 where companyname like $sphrase or postitle like $sphrase or review_comment like $sphrase $groupby";
 	$results = executePlainSQL($sqlquery);
 
 	// Print results in table
-	echo "<br>Reviews:<br>";
-	echo "<table>";
-	echo $tableheader;
-	while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
-		$rows = '<tr>';
-		foreach ($attrsToShow as $attr) {
-			$rows = $rows."<td>".$row[$attr]."</td>";
+	if ($selectwhat == "*") {
+		printReviews($results);
+	} else {
+		echo "<br>Reviews:<br>";
+		echo "<table>";
+		echo $tableheader;
+		while ($row = OCI_Fetch_Array($results, OCI_BOTH)) {
+			$rows = '<tr>';
+			foreach ($attrsToShow as $attr) {
+				$rows = $rows."<td>".$row[$attr]."</td>";
+			}
+			$rows = $rows."</tr>";
+			echo $rows;
 		}
-		$rows = $rows."</tr>";
-		echo $rows;
+		echo "</table>";
 	}
-	echo "</table>";
 }
 
 // Helper function for advanced search
